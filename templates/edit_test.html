@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Test - Lab Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-vial me-2"></i>Edit Test
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Test Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ test.name }}" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="price" class="form-label">Price ($)</label>
+                                <input type="number" class="form-control" id="price" name="price" value="{{ test.price }}" step="0.01" min="0" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="category_id" class="form-label">Category</label>
+                                <select class="form-select" id="category_id" name="category_id" required>
+                                    <option value="">Select Category</option>
+                                    {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if category.id == test.category_id %}selected{% endif %}>
+                                        {{ category.name }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="unit" class="form-label">Unit (Optional)</label>
+                                <input type="text" class="form-control" id="unit" name="unit" value="{{ test.unit or '' }}" placeholder="e.g., mg/dL, µg/mL">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="reference_range" class="form-label">Reference Range (Optional)</label>
+                                <input type="text" class="form-control" id="reference_range" name="reference_range" value="{{ test.reference_range or '' }}" placeholder="e.g., 70-100, <5.0">
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Save Changes
+                            </button>
+                            <a href="/tests" class="btn btn-secondary">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

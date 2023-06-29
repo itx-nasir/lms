@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Report - Lab Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-edit me-2"></i>Edit Test Results</h1>
+        <a href="/reports/{{ order.id }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back to Report
+        </a>
+    </div>
+
+    <!-- Patient Info Card -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-user me-1"></i>Patient: {{ order.patient.name }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Age:</strong> {{ order.patient.age }} years
+                </div>
+                <div class="col-md-3">
+                    <strong>Gender:</strong> {{ order.patient.gender }}
+                </div>
+                <div class="col-md-3">
+                    <strong>Phone:</strong> {{ order.patient.phone }}
+                </div>
+                <div class="col-md-3">
+                    <strong>Report ID:</strong> RPT-{{ order.id }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Results Forms -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-vial me-1"></i>Test Results</h5>
+        </div>
+        <div class="card-body">
+            {% for item in order.items %}
+            <div class="card mb-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">{{ item.test.name }}</h6>
+                    <small class="text-muted">
+                        Category: {{ item.test.category.name }} | 
+                        Unit: {{ item.test.unit or 'N/A' }} | 
+                        Reference Range: {{ item.test.reference_range or 'N/A' }}
+                    </small>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="/reports/items/{{ item.id }}/update">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="result_value_{{ item.id }}" class="form-label">Result Value</label>
+                                <input type="text" class="form-control" id="result_value_{{ item.id }}" 
+                                       name="result_value" value="{{ item.result_value or '' }}" 
+                                       placeholder="Enter test result">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="result_notes_{{ item.id }}" class="form-label">Notes (Optional)</label>
+                                <textarea class="form-control" id="result_notes_{{ item.id }}" 
+                                          name="result_notes" rows="2" 
+                                          placeholder="Any additional notes or observations">{{ item.result_notes or '' }}</textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fas fa-save me-1"></i>Update Result
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="text-end mt-4">
+        <a href="/reports/{{ order.id }}" class="btn btn-success">
+            <i class="fas fa-eye me-1"></i>View Complete Report
+        </a>
+        <a href="/reports/{{ order.id }}/pdf" class="btn btn-primary">
+            <i class="fas fa-download me-1"></i>Download PDF
+        </a>
+    </div>
+</div>
+{% endblock %}
