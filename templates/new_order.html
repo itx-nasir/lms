@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}New Order - Lab Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-plus me-2"></i>Create New Order
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="mb-4">
+                            <label for="patient_id" class="form-label">Select Patient</label>
+                            <select class="form-select" id="patient_id" name="patient_id" required>
+                                <option value="">Choose a patient...</option>
+                                {% for patient in patients %}
+                                <option value="{{ patient.id }}">
+                                    {{ patient.name }} - Age: {{ patient.age }}, {{ patient.gender }} - {{ patient.phone }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Select Tests</label>
+                            <div class="row">
+                                {% for test in tests %}
+                                <div class="col-md-6 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input test-checkbox" type="checkbox" 
+                                               value="{{ test.id }}" id="test{{ test.id }}" name="test_ids"
+                                               data-price="{{ test.price }}">
+                                        <label class="form-check-label" for="test{{ test.id }}">
+                                            <strong>{{ test.name }}</strong>
+                                            <span class="badge bg-secondary ms-1">{{ test.category.name }}</span>
+                                            <br>
+                                            <small class="text-muted">${{ "%.2f"|format(test.price) }}</small>
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">Order Summary</h5>
+                                <p class="mb-2">Selected Tests: <span id="selectedCount">0</span></p>
+                                <p class="mb-0 fw-bold">Total Amount: $<span id="totalAmount">0.00</span></p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                                <i class="fas fa-save me-1"></i>Create Order
+                            </button>
+                            <a href="/orders" class="btn btn-secondary">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.test-checkbox');
+    const selectedCountSpan = document.getElementById('selectedCount');
+    const totalAmountSpan = document.getElementById('totalAmount');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function updateSummary() {
+        let selectedCount = 0;
+        let totalAmount = 0;
+
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                selectedCount++;
+                totalAmount += parseFloat(checkbox.dataset.price);
+            }
+        });
+
+        selectedCountSpan.textContent = selectedCount;
+        totalAmountSpan.textContent = totalAmount.toFixed(2);
+        submitBtn.disabled = selectedCount === 0;
+    }
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateSummary);
+    });
+});
+</script>
+{% endblock %}

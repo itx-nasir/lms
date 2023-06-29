@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Order Details - Lab Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-clipboard-list me-2"></i>Order Details</h1>
+        <div>
+            {% if order.status == 'pending' %}
+            <form method="post" action="/orders/{{ order.id }}/complete" class="d-inline">
+                <button type="submit" class="btn btn-success" 
+                        onclick="return confirm('Mark this order as completed?')">
+                    <i class="fas fa-check me-1"></i>Mark Completed
+                </button>
+            </form>
+            {% endif %}
+            <a href="/orders" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Orders
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-1"></i>Order Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <strong>Order ID:</strong> ORD-{{ order.id }}
+                    </div>
+                    <div class="mb-2">
+                        <strong>Ordered Date:</strong> {{ order.ordered_at.strftime('%B %d, %Y at %H:%M') }}
+                    </div>
+                    <div class="mb-2">
+                        <strong>Status:</strong> 
+                        {% if order.status == 'pending' %}
+                            <span class="badge bg-warning">Pending</span>
+                        {% else %}
+                            <span class="badge bg-success">Completed</span>
+                        {% endif %}
+                    </div>
+                    <div class="mb-0">
+                        <strong>Total Amount:</strong> <span class="text-success fw-bold">${{ "%.2f"|format(order.total_amount) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-user me-1"></i>Patient Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <strong>Name:</strong> {{ order.patient.name }}
+                    </div>
+                    <div class="mb-2">
+                        <strong>Age:</strong> {{ order.patient.age }} years
+                    </div>
+                    <div class="mb-2">
+                        <strong>Gender:</strong> {{ order.patient.gender }}
+                    </div>
+                    <div class="mb-0">
+                        <strong>Phone:</strong> {{ order.patient.phone }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tests -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-vial me-1"></i>Ordered Tests</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Test Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Unit</th>
+                            <th>Reference Range</th>
+                            {% if order.status == 'completed' %}
+                            <th>Result</th>
+                            <th>Notes</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items %}
+                        <tr>
+                            <td>{{ item.test.name }}</td>
+                            <td>
+                                <span class="badge bg-secondary">{{ item.test.category.name }}</span>
+                            </td>
+                            <td>${{ "%.2f"|format(item.test.price) }}</td>
+                            <td>{{ item.test.unit or '-' }}</td>
+                            <td>{{ item.test.reference_range or '-' }}</td>
+                            {% if order.status == 'completed' %}
+                            <td>{{ item.result_value or '-' }}</td>
+                            <td>{{ item.result_notes or '-' }}</td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if order.status == 'completed' %}
+    <div class="text-end mt-3">
+        <a href="/reports/{{ order.id }}" class="btn btn-info">
+            <i class="fas fa-file-alt me-1"></i>View Report
+        </a>
+        <a href="/reports/{{ order.id }}/pdf" class="btn btn-primary">
+            <i class="fas fa-download me-1"></i>Download PDF
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
