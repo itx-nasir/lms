@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Lab Report - Lab Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-file-alt me-2"></i>Lab Report</h1>
+        <div>
+            <a href="/reports/{{ order.id }}/edit" class="btn btn-outline-primary">
+                <i class="fas fa-edit me-1"></i>Edit Results
+            </a>
+            <a href="/reports/{{ order.id }}/pdf" class="btn btn-primary">
+                <i class="fas fa-download me-1"></i>Download PDF
+            </a>
+            <button onclick="window.print()" class="btn btn-success">
+                <i class="fas fa-print me-1"></i>Print
+            </button>
+        </div>
+    </div>
+
+    <!-- Report Content -->
+    <div class="card" id="reportContent">
+        <div class="card-body">
+            <!-- Header -->
+            <div class="text-center mb-4 pb-3 border-bottom">
+                <h2 class="text-primary mb-1">Laboratory Report</h2>
+                <h4 class="text-secondary mb-2">Medical Laboratory Services</h4>
+                <p class="mb-0">Report Date: {{ order.ordered_at.strftime('%B %d, %Y') }}</p>
+            </div>
+
+            <!-- Patient Info -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="bg-light p-3 rounded">
+                        <h5 class="text-primary mb-3">Patient Information</h5>
+                        <div class="row">
+                            <div class="col-4"><strong>Name:</strong></div>
+                            <div class="col-8">{{ order.patient.name }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4"><strong>Age:</strong></div>
+                            <div class="col-8">{{ order.patient.age }} years</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4"><strong>Gender:</strong></div>
+                            <div class="col-8">{{ order.patient.gender }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4"><strong>Phone:</strong></div>
+                            <div class="col-8">{{ order.patient.phone }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4"><strong>Report ID:</strong></div>
+                            <div class="col-8">RPT-{{ order.id }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bg-light p-3 rounded">
+                        <h5 class="text-primary mb-3">Order Information</h5>
+                        <div class="row">
+                            <div class="col-4"><strong>Order ID:</strong></div>
+                            <div class="col-8">ORD-{{ order.id }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4"><strong>Order Date:</strong></div>
+                            <div class="col-8">{{ order.ordered_at.strftime('%Y-%m-%d') }}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4"><strong>Status:</strong></div>
+                            <div class="col-8">
+                                <span class="badge bg-success">Completed</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4"><strong>Total Tests:</strong></div>
+                            <div class="col-8">{{ order.items|length }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Results -->
+            <h5 class="text-primary mb-3">Test Results</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Test Name</th>
+                            <th>Result</th>
+                            <th>Unit</th>
+                            <th>Reference Range</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items %}
+                        <tr>
+                            <td><strong>{{ item.test.name }}</strong></td>
+                            <td>
+                                {% if item.result_value %}
+                                    <strong>{{ item.result_value }}</strong>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ item.test.unit or '-' }}</td>
+                            <td>{{ item.test.reference_range or '-' }}</td>
+                            <td>{{ item.result_notes or '-' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-5 pt-4 border-top">
+                <p class="text-muted mb-1">This report is computer generated and does not require signature.</p>
+                <p class="text-muted">For any queries, please contact the laboratory.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-end mt-3">
+        <a href="/reports" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i>Back to Reports
+        </a>
+    </div>
+</div>
+
+<style>
+@media print {
+    .btn, .navbar, .d-flex, .text-end {
+        display: none !important;
+    }
+    
+    #reportContent {
+        box-shadow: none !important;
+        border: none !important;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    
+    .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+}
+</style>
+{% endblock %}
