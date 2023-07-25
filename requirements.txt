@@ -6,4 +6,5 @@ python-multipart==0.0.12
 passlib[bcrypt]==1.7.4
 python-jose[cryptography]==3.3.0
 aiofiles==24.1.0
-# weasyprint==63.1  # Optional - uncomment if you want PDF generation (requires additional system libraries on Windows)
+python-dotenv==1.0.0
+bcrypt==4.0.1
