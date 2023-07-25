@@ -1,9 +1,8 @@
-import sys
+import os
+from dotenv import load_dotenv
 
-# Check Python version compatibility
-if sys.version_info >= (3, 13):
-    print("Warning: Python 3.13 detected. Some dependencies might have compatibility issues.")
-    print("Consider using Python 3.11 or 3.12 for optimal compatibility.")
+# Load environment variables
+load_dotenv()
 
 try:
     from fastapi import FastAPI, Depends, HTTPException, Request, Form, status
@@ -25,7 +24,11 @@ except ImportError as e:
     print("If using Python 3.13, consider downgrading to Python 3.11 or 3.12")
     sys.exit(1)
 
-app = FastAPI(title="Lab Management System")
+app = FastAPI(
+    title="Lab Management System",
+    docs_url=None,  # Disable API docs in production
+    redoc_url=None
+)
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -39,10 +42,13 @@ create_tables()
 # Initialize admin user if not exists
 def init_admin():
     db = next(get_db())
-    admin = crud.get_admin_user(db, "admin")
+    admin_username = os.getenv("ADMIN_USERNAME", "admin")
+    admin_password = os.getenv("ADMIN_PASSWORD", "LMSadmin2024!")
+    
+    admin = crud.get_admin_user(db, admin_username)
     if not admin:
-        crud.create_admin_user(db, "admin", "admin123")
-        print("Admin user created: admin/admin123")
+        crud.create_admin_user(db, admin_username, admin_password)
+        print(f"Admin user created: {admin_username}/{admin_password}")
     db.close()
 
 init_admin()
@@ -373,4 +379,12 @@ async def download_report_pdf(order_id: int, user: str = Depends(get_current_use
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    
+    host = os.getenv("HOST", "0.0.0.0")
+    port = int(os.getenv("PORT", "8000"))
+    
+    print("🚀 Starting Lab Management System")
+    print(f"📱 Server running on http://{host}:{port}")
+    print("🔑 Check your .env file for admin credentials")
+    
+    uvicorn.run(app, host=host, port=port)
