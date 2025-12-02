@@ -24,32 +24,25 @@
                     <h5 class="mb-0"><i class="fas fa-tags me-1"></i>Test Categories</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <button class="btn btn-outline-secondary category-btn active" data-category="" type="button">
+                            <i class="fas fa-list me-1"></i>All Tests
+                        </button>
                         {% for category in categories %}
-                        <div class="col-md-3 mb-2">
-                            <span class="badge bg-primary fs-6">{{ category.name }}</span>
-                        </div>
+                        <button class="btn btn-outline-primary category-btn" data-category="{{ category.id }}" type="button">
+                            {{ category.name }}
+                        </button>
                         {% else %}
-                        <div class="col-12">
-                            <p class="text-muted mb-0">No categories found</p>
-                        </div>
+                        <p class="text-muted mb-0">No categories found</p>
                         {% endfor %}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="testSearch" placeholder="Search tests by name...">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Filter Section -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <label for="categoryFilter" class="form-label">Filter by Category:</label>
-            <select class="form-select" id="categoryFilter">
-                <option value="">All Categories</option>
-                {% for category in categories %}
-                <option value="{{ category.id }}">{{ category.name }}</option>
-                {% endfor %}
-            </select>
         </div>
     </div>
 
@@ -191,94 +184,32 @@
 </div>
 
 <script>
-// Category filtering functionality
 document.addEventListener('DOMContentLoaded', function() {
-    const categoryFilter = document.getElementById('categoryFilter');
-    const originalEmptyRow = document.querySelector('tbody tr:last-child');
-    const isOriginallyEmpty = originalEmptyRow && originalEmptyRow.textContent.includes('No tests found');
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    const searchInput = document.getElementById('testSearch');
+    const testRows = document.querySelectorAll('.test-row');
+    const cardHeader = document.querySelector('.card-header h5');
+    let selectedCategory = '';
     
-    categoryFilter.addEventListener('change', function() {
-        const selectedCategory = this.value;
-        const testRows = document.querySelectorAll('.test-row');
-        let visibleCount = 0;
-        
-        // Show/hide rows based on category filter
-        testRows.forEach(row => {
-            if (selectedCategory === '' || row.dataset.categoryId === selectedCategory) {
-                row.style.display = '';
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
-            }
+    // Category button click functionality
+    categoryButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Update button states
+            categoryButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            selectedCategory = this.dataset.category;
+            filterTests();
         });
-        
-        // Handle empty state message
-        const existingEmptyRow = document.querySelector('.no-tests-filtered');
-        
-        if (visibleCount === 0 && testRows.length > 0) {
-            // Hide original empty message if it exists
-            if (isOriginallyEmpty && originalEmptyRow) {
-                originalEmptyRow.style.display = 'none';
-            }
-            
-            // Show filtered empty message
-            if (!existingEmptyRow) {
-                const tbody = document.querySelector('tbody');
-                const emptyRow = document.createElement('tr');
-                emptyRow.className = 'no-tests-filtered';
-                emptyRow.innerHTML = `
-                    <td colspan="7" class="text-center text-muted py-4">
-                        <i class="fas fa-filter me-2"></i>No tests found for selected category
-                        <br><small class="text-muted mt-1">Try selecting a different category or "All Categories"</small>
-                    </td>
-                `;
-                tbody.appendChild(emptyRow);
-            } else {
-                existingEmptyRow.style.display = '';
-            }
-        } else {
-            // Hide filtered empty message
-            if (existingEmptyRow) {
-                existingEmptyRow.style.display = 'none';
-            }
-            
-            // Show original empty message if needed
-            if (isOriginallyEmpty && originalEmptyRow && visibleCount === 0) {
-                originalEmptyRow.style.display = '';
-            }
-        }
-        
-        // Update card header with count
-        const cardHeader = document.querySelector('.card-header h5');
-        if (selectedCategory === '') {
-            cardHeader.innerHTML = '<i class="fas fa-list me-1"></i>All Tests';
-        } else {
-            const categoryName = categoryFilter.options[categoryFilter.selectedIndex].text;
-            cardHeader.innerHTML = `<i class="fas fa-list me-1"></i>Tests: ${categoryName} (${visibleCount})`;
-        }
     });
-    
-    // Add search functionality
-    const searchInput = document.createElement('input');
-    searchInput.type = 'text';
-    searchInput.className = 'form-control';
-    searchInput.placeholder = 'Search tests by name...';
-    searchInput.id = 'testSearch';
-    
-    const searchDiv = document.createElement('div');
-    searchDiv.className = 'col-md-6';
-    searchDiv.innerHTML = '<label for="testSearch" class="form-label">Search Tests:</label>';
-    searchDiv.appendChild(searchInput);
-    
-    // Insert search box next to category filter
-    const filterRow = document.querySelector('.row.mb-4');
-    filterRow.appendChild(searchDiv);
     
     // Search functionality
     searchInput.addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        const testRows = document.querySelectorAll('.test-row');
-        const selectedCategory = categoryFilter.value;
+        filterTests();
+    });
+    
+    function filterTests() {
+        const searchTerm = searchInput.value.toLowerCase();
         let visibleCount = 0;
         
         testRows.forEach(row => {
@@ -294,32 +225,47 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Update empty state for combined filters
-        updateEmptyState(visibleCount, testRows.length);
-    });
+        // Update card header with current filter
+        updateHeader(visibleCount);
+        updateEmptyState(visibleCount);
+    }
     
-    function updateEmptyState(visibleCount, totalCount) {
-        const existingEmptyRow = document.querySelector('.no-tests-filtered');
+    function updateHeader(visibleCount) {
+        const activeButton = document.querySelector('.category-btn.active');
+        const categoryName = activeButton.textContent.trim();
         
-        if (visibleCount === 0 && totalCount > 0) {
+        if (selectedCategory === '') {
+            cardHeader.innerHTML = `<i class="fas fa-list me-1"></i>All Tests (${visibleCount})`;
+        } else {
+            cardHeader.innerHTML = `<i class="fas fa-list me-1"></i>Tests: ${categoryName} (${visibleCount})`;
+        }
+    }
+    
+    function updateEmptyState(visibleCount) {
+        let existingEmptyRow = document.querySelector('.no-tests-filtered');
+        
+        if (visibleCount === 0 && testRows.length > 0) {
             if (!existingEmptyRow) {
                 const tbody = document.querySelector('tbody');
                 const emptyRow = document.createElement('tr');
                 emptyRow.className = 'no-tests-filtered';
                 emptyRow.innerHTML = `
                     <td colspan="7" class="text-center text-muted py-4">
-                        <i class="fas fa-search me-2"></i>No tests match your search criteria
-                        <br><small class="text-muted mt-1">Try adjusting your search terms or filters</small>
+                        <i class="fas fa-filter me-2"></i>No tests found
+                        <br><small class="text-muted mt-1">Try selecting a different category or adjusting your search</small>
                     </td>
                 `;
                 tbody.appendChild(emptyRow);
-            } else {
-                existingEmptyRow.style.display = '';
             }
+            existingEmptyRow = document.querySelector('.no-tests-filtered');
+            existingEmptyRow.style.display = '';
         } else if (existingEmptyRow) {
             existingEmptyRow.style.display = 'none';
         }
     }
+    
+    // Initialize header with count
+    updateHeader(testRows.length);
 });
 </script>
 {% endblock %}

@@ -2,9 +2,7 @@ try:
     from weasyprint import HTML, CSS
     from weasyprint.text.fonts import FontConfiguration
     WEASYPRINT_AVAILABLE = True
-except (ImportError, OSError) as e:
-    print("WeasyPrint not available. PDF generation will use HTML format.")
-    print(f"Error: {e}")
+except (ImportError, OSError):
     WEASYPRINT_AVAILABLE = False
 
 import tempfile
@@ -167,8 +165,7 @@ def generate_report_pdf(order_data: dict) -> bytes:
     try:
         pdf_bytes = HTML(string=html_content).write_pdf()
         return pdf_bytes
-    except Exception as e:
-        print(f"PDF generation failed: {e}")
+    except Exception:
         # Fallback to HTML
         return html_content.encode('utf-8')
 

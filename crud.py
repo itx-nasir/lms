@@ -40,7 +40,7 @@ def create_patient(db: Session, patient: PatientCreate):
 def update_patient(db: Session, patient_id: int, patient_update: PatientUpdate):
     db_patient = db.query(Patient).filter(Patient.id == patient_id).first()
     if db_patient:
-        for key, value in patient_update.dict().items():
+        for key, value in patient_update.dict(exclude_unset=True).items():
             setattr(db_patient, key, value)
         db.commit()
         db.refresh(db_patient)
@@ -71,9 +71,6 @@ def get_tests(db: Session, category_id: Optional[int] = None):
         query = query.filter(Test.category_id == category_id)
     return query.all()
 
-def get_tests_by_category(db: Session, category_id: int):
-    return db.query(Test).filter(Test.category_id == category_id).all()
-
 def get_test(db: Session, test_id: int):
     return db.query(Test).filter(Test.id == test_id).first()
 
@@ -87,7 +84,7 @@ def create_test(db: Session, test: TestCreate):
 def update_test(db: Session, test_id: int, test_update: TestUpdate):
     db_test = db.query(Test).filter(Test.id == test_id).first()
     if db_test:
-        for key, value in test_update.dict().items():
+        for key, value in test_update.dict(exclude_unset=True).items():
             setattr(db_test, key, value)
         db.commit()
         db.refresh(db_test)

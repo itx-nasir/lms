@@ -18,11 +18,7 @@ class PatientBase(BaseModel):
     gender: str
     phone: str
 
-class PatientCreate(PatientBase):
-    pass
-
-class PatientUpdate(PatientBase):
-    pass
+PatientCreate = PatientUpdate = PatientBase
 
 class Patient(PatientBase):
     id: int
@@ -35,8 +31,7 @@ class Patient(PatientBase):
 class TestCategoryBase(BaseModel):
     name: str
 
-class TestCategoryCreate(TestCategoryBase):
-    pass
+TestCategoryCreate = TestCategoryBase
 
 class TestCategory(TestCategoryBase):
     id: int
@@ -52,11 +47,7 @@ class TestBase(BaseModel):
     reference_range: Optional[str] = None
     category_id: int
 
-class TestCreate(TestBase):
-    pass
-
-class TestUpdate(TestBase):
-    pass
+TestCreate = TestUpdate = TestBase
 
 class Test(TestBase):
     id: int
@@ -71,8 +62,7 @@ class TestOrderItemBase(BaseModel):
     result_value: Optional[str] = None
     result_notes: Optional[str] = None
 
-class TestOrderItemCreate(TestOrderItemBase):
-    pass
+TestOrderItemCreate = TestOrderItemBase
 
 class TestOrderItemUpdate(BaseModel):
     result_value: Optional[str] = None

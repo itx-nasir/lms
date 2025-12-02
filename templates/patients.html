@@ -110,7 +110,8 @@
                     </div>
                     <div class="mb-3">
                         <label for="phone" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone" name="phone" required>
+                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="03XX-XXXXXXX" pattern="[0-9]{4}-[0-9]{7}" required>
+                        <div class="form-text">Format: 03XX-XXXXXXX (e.g., 0300-1234567)</div>
                     </div>
                 </div>
                 <div class="modal-footer">

@@ -1,33 +1,25 @@
 import os
+from datetime import timedelta
+from typing import Optional
+
 from dotenv import load_dotenv
+from fastapi import FastAPI, Depends, HTTPException, Request, Form
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
+
+import crud
+import schemas
+from auth import verify_password, create_access_token, verify_token
+from database import get_db, create_tables
 
 # Load environment variables
 load_dotenv()
 
-try:
-    from fastapi import FastAPI, Depends, HTTPException, Request, Form, status
-    from fastapi.responses import HTMLResponse, RedirectResponse, Response
-    from fastapi.datastructures import FormData
-    from fastapi.staticfiles import StaticFiles
-    from fastapi.templating import Jinja2Templates
-    from sqlalchemy.orm import Session
-    from typing import Optional, List
-    import crud
-    import models
-    import schemas
-    from database import get_db, create_tables
-    from auth import verify_password, create_access_token, verify_token
-    from utils import generate_report_pdf, generate_report_html
-    from datetime import timedelta
-except ImportError as e:
-    print(f"Import error: {e}")
-    print("Please install all dependencies with: pip install -r requirements.txt")
-    print("If using Python 3.13, consider downgrading to Python 3.11 or 3.12")
-    sys.exit(1)
-
 app = FastAPI(
     title="Lab Management System",
-    docs_url=None,  # Disable API docs in production
+    docs_url=None,
     redoc_url=None
 )
 
@@ -40,30 +32,22 @@ templates = Jinja2Templates(directory="templates")
 # Create database tables
 create_tables()
 
-# Initialize admin user if not exists
+# Initialize admin user
 def init_admin():
     db = next(get_db())
     admin_username = os.getenv("ADMIN_USERNAME", "admin")
-    admin_password = os.getenv("ADMIN_PASSWORD", "LMSadmin2024!")
+    admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
     
-    admin = crud.get_admin_user(db, admin_username)
-    if not admin:
+    if not crud.get_admin_user(db, admin_username):
         crud.create_admin_user(db, admin_username, admin_password)
-        print(f"Admin user created: {admin_username}/{admin_password}")
     db.close()
 
 init_admin()
 
-# Authentication dependency
 def get_current_user(request: Request):
     token = request.cookies.get("access_token")
-    if not token:
+    if not token or not (username := verify_token(token)):
         raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    username = verify_token(token)
-    if not username:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    
     return username
 
 # Routes
@@ -124,7 +108,6 @@ async def patients_page(request: Request, search: Optional[str] = None, user: st
 
 @app.post("/patients")
 async def create_patient_endpoint(
-    request: Request,
     name: str = Form(...),
     age: int = Form(...),
     gender: str = Form(...),
@@ -176,10 +159,7 @@ async def tests_page(
     db: Session = Depends(get_db)
 ):
     categories = crud.get_test_categories(db)
-    if category_id:
-        tests = crud.get_tests_by_category(db, category_id)
-    else:
-        tests = crud.get_tests(db)
+    tests = crud.get_tests(db, category_id)
     return templates.TemplateResponse("tests.html", {
         "request": request,
         "user": user,
@@ -286,16 +266,11 @@ async def create_order_endpoint(
     user: str = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    # Get form data
     form_data = await request.form()
-    test_ids = form_data.getlist("test_ids")
+    test_ids = [int(tid) for tid in form_data.getlist("test_ids")]
     
     if not test_ids:
-        # Redirect back with error - for now just redirect
         return RedirectResponse(url="/orders/new", status_code=302)
-    
-    # Convert to integers
-    test_ids = [int(tid) for tid in test_ids]
     
     order_data = schemas.TestOrderCreate(patient_id=patient_id, test_ids=test_ids)
     crud.create_order(db, order_data)
@@ -323,8 +298,6 @@ async def delete_order_endpoint(order_id: int, user: str = Depends(get_current_u
     order = crud.get_order(db, order_id)
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    
-    # Only allow deletion of pending orders
     if order.status != "pending":
         raise HTTPException(status_code=400, detail="Can only delete pending orders")
     
@@ -365,6 +338,32 @@ async def edit_report_page(request: Request, order_id: int, user: str = Depends(
         "order": order
     })
 
+@app.post("/reports/{order_id}/update-all")
+async def update_all_report_items_endpoint(
+    request: Request,
+    order_id: int,
+    user: str = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    form_data = await request.form()
+    order = crud.get_order(db, order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Update each item
+    for item in order.items:
+        result_value = form_data.get(f"result_value_{item.id}")
+        result_notes = form_data.get(f"result_notes_{item.id}")
+        
+        if result_value is not None:
+            item_data = schemas.TestOrderItemUpdate(
+                result_value=result_value if result_value.strip() else None,
+                result_notes=result_notes if result_notes and result_notes.strip() else None
+            )
+            crud.update_order_item_result(db, item.id, item_data)
+    
+    return RedirectResponse(url=f"/reports/{order_id}", status_code=302)
+
 @app.post("/reports/items/{item_id}/update")
 async def update_report_item_endpoint(
     item_id: int,
@@ -399,14 +398,13 @@ async def download_report_pdf(order_id: int, user: str = Depends(get_current_use
                 media_type="application/pdf",
                 headers={"Content-Disposition": f"attachment; filename=report_{order_id}.pdf"}
             )
-        else:
-            # Fallback to HTML that can be printed to PDF
-            html_content = generate_report_html(order)
-            return Response(
-                content=html_content.encode('utf-8'),
-                media_type="text/html",
-                headers={"Content-Disposition": f"inline; filename=report_{order_id}.html"}
-            )
+        
+        html_content = generate_report_html(order)
+        return Response(
+            content=html_content.encode('utf-8'),
+            media_type="text/html",
+            headers={"Content-Disposition": f"inline; filename=report_{order_id}.html"}
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating report: {str(e)}")
 
@@ -415,9 +413,5 @@ if __name__ == "__main__":
     
     host = os.getenv("HOST", "0.0.0.0")
     port = int(os.getenv("PORT", "8000"))
-    
-    print("🚀 Starting Lab Management System")
-    print(f"📱 Server running on http://{host}:{port}")
-    print("🔑 Check your .env file for admin credentials")
     
     uvicorn.run(app, host=host, port=port)

@@ -3,12 +3,10 @@
 {% block title %}Dashboard - Lab Management System{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <h1 class="mb-4">
-                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-            </h1>
+            <h2 class="mb-4">Dashboard</h2>
         </div>
     </div>
 
@@ -18,15 +16,15 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h4 class="card-title">{{ stats.total_patients }}</h4>
-                            <p class="card-text">Total Patients</p>
+                            <h4>{{ stats.total_patients }}</h4>
+                            <p class="mb-0">Total Patients</p>
                         </div>
                         <div class="align-self-center">
                             <i class="fas fa-users fa-2x opacity-75"></i>
                         </div>
                     </div>
                     <a href="/patients" class="btn btn-outline-light btn-sm mt-2">
-                        View Patients <i class="fas fa-arrow-right"></i>
+                        View Patients
                     </a>
                 </div>
             </div>
@@ -37,15 +35,15 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h4 class="card-title">{{ stats.total_orders }}</h4>
-                            <p class="card-text">Total Orders</p>
+                            <h4>{{ stats.total_orders }}</h4>
+                            <p class="mb-0">Total Orders</p>
                         </div>
                         <div class="align-self-center">
                             <i class="fas fa-clipboard-list fa-2x opacity-75"></i>
                         </div>
                     </div>
                     <a href="/orders" class="btn btn-outline-light btn-sm mt-2">
-                        View Orders <i class="fas fa-arrow-right"></i>
+                        View Orders
                     </a>
                 </div>
             </div>
@@ -56,15 +54,15 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h4 class="card-title">{{ stats.pending_orders }}</h4>
-                            <p class="card-text">Pending Orders</p>
+                            <h4>{{ stats.pending_orders }}</h4>
+                            <p class="mb-0">Pending Orders</p>
                         </div>
                         <div class="align-self-center">
                             <i class="fas fa-clock fa-2x opacity-75"></i>
                         </div>
                     </div>
                     <a href="/orders" class="btn btn-outline-light btn-sm mt-2">
-                        Process Orders <i class="fas fa-arrow-right"></i>
+                        View Pending
                     </a>
                 </div>
             </div>
@@ -75,24 +73,24 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h4 class="card-title">{{ stats.completed_orders }}</h4>
-                            <p class="card-text">Completed Orders</p>
+                            <h4>{{ stats.completed_orders }}</h4>
+                            <p class="mb-0">Completed Orders</p>
                         </div>
                         <div class="align-self-center">
                             <i class="fas fa-check-circle fa-2x opacity-75"></i>
                         </div>
                     </div>
                     <a href="/reports" class="btn btn-outline-light btn-sm mt-2">
-                        View Reports <i class="fas fa-arrow-right"></i>
+                        View Reports
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row mt-5">
+    <div class="row mt-4">
         <div class="col-12">
-            <h3 class="mb-3">Quick Actions</h3>
+            <h4 class="mb-3">Quick Actions</h4>
         </div>
     </div>
 
@@ -101,11 +99,9 @@
             <div class="card">
                 <div class="card-body text-center">
                     <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
-                    <h5 class="card-title">Add Patient</h5>
-                    <p class="card-text">Register a new patient in the system</p>
-                    <a href="/patients" class="btn btn-primary">
-                        <i class="fas fa-plus me-1"></i>Add Patient
-                    </a>
+                    <h5>Add Patient</h5>
+                    <p class="text-muted">Register new patient</p>
+                    <a href="/patients" class="btn btn-primary">Add Patient</a>
                 </div>
             </div>
         </div>
@@ -114,11 +110,9 @@
             <div class="card">
                 <div class="card-body text-center">
                     <i class="fas fa-clipboard-list fa-3x text-info mb-3"></i>
-                    <h5 class="card-title">New Order</h5>
-                    <p class="card-text">Create a new test order for a patient</p>
-                    <a href="/orders/new" class="btn btn-info">
-                        <i class="fas fa-plus me-1"></i>New Order
-                    </a>
+                    <h5>New Order</h5>
+                    <p class="text-muted">Create test order</p>
+                    <a href="/orders/new" class="btn btn-info">New Order</a>
                 </div>
             </div>
         </div>
@@ -127,11 +121,9 @@
             <div class="card">
                 <div class="card-body text-center">
                     <i class="fas fa-vial fa-3x text-success mb-3"></i>
-                    <h5 class="card-title">Manage Tests</h5>
-                    <p class="card-text">Add or edit test categories and tests</p>
-                    <a href="/tests" class="btn btn-success">
-                        <i class="fas fa-cog me-1"></i>Manage Tests
-                    </a>
+                    <h5>Manage Tests</h5>
+                    <p class="text-muted">Add or edit tests</p>
+                    <a href="/tests" class="btn btn-success">Manage Tests</a>
                 </div>
             </div>
         </div>
