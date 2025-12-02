@@ -43,7 +43,7 @@
                         {% endif %}
                     </div>
                     <div class="mb-0">
-                        <strong>Total Amount:</strong> <span class="text-success fw-bold">${{ "%.2f"|format(order.total_amount) }}</span>
+                        <strong>Total Amount:</strong> <span class="text-success fw-bold">PKR {{ "%.2f"|format(order.total_amount) }}</span>
                     </div>
                 </div>
             </div>
@@ -100,7 +100,7 @@
                             <td>
                                 <span class="badge bg-secondary">{{ item.test.category.name }}</span>
                             </td>
-                            <td>${{ "%.2f"|format(item.test.price) }}</td>
+                            <td>PKR {{ "%.2f"|format(item.test.price) }}</td>
                             <td>{{ item.test.unit or '-' }}</td>
                             <td>{{ item.test.reference_range or '-' }}</td>
                             {% if order.status == 'completed' %}

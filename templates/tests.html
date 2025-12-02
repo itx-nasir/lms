@@ -40,6 +40,19 @@
         </div>
     </div>
 
+    <!-- Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <label for="categoryFilter" class="form-label">Filter by Category:</label>
+            <select class="form-select" id="categoryFilter">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
     <!-- Tests Table -->
     <div class="card">
         <div class="card-header">
@@ -61,13 +74,13 @@
                     </thead>
                     <tbody>
                         {% for test in tests %}
-                        <tr>
+                        <tr class="test-row" data-category-id="{{ test.category_id }}">
                             <td>{{ test.id }}</td>
                             <td>{{ test.name }}</td>
                             <td>
                                 <span class="badge bg-secondary">{{ test.category.name }}</span>
                             </td>
-                            <td>${{ "%.2f"|format(test.price) }}</td>
+                            <td>PKR {{ "%.2f"|format(test.price) }}</td>
                             <td>{{ test.unit or '-' }}</td>
                             <td>{{ test.reference_range or '-' }}</td>
                             <td>
@@ -142,7 +155,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="price" class="form-label">Price ($)</label>
+                            <label for="price" class="form-label">Price (PKR)</label>
                             <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -176,4 +189,137 @@
         </div>
     </div>
 </div>
+
+<script>
+// Category filtering functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const categoryFilter = document.getElementById('categoryFilter');
+    const originalEmptyRow = document.querySelector('tbody tr:last-child');
+    const isOriginallyEmpty = originalEmptyRow && originalEmptyRow.textContent.includes('No tests found');
+    
+    categoryFilter.addEventListener('change', function() {
+        const selectedCategory = this.value;
+        const testRows = document.querySelectorAll('.test-row');
+        let visibleCount = 0;
+        
+        // Show/hide rows based on category filter
+        testRows.forEach(row => {
+            if (selectedCategory === '' || row.dataset.categoryId === selectedCategory) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Handle empty state message
+        const existingEmptyRow = document.querySelector('.no-tests-filtered');
+        
+        if (visibleCount === 0 && testRows.length > 0) {
+            // Hide original empty message if it exists
+            if (isOriginallyEmpty && originalEmptyRow) {
+                originalEmptyRow.style.display = 'none';
+            }
+            
+            // Show filtered empty message
+            if (!existingEmptyRow) {
+                const tbody = document.querySelector('tbody');
+                const emptyRow = document.createElement('tr');
+                emptyRow.className = 'no-tests-filtered';
+                emptyRow.innerHTML = `
+                    <td colspan="7" class="text-center text-muted py-4">
+                        <i class="fas fa-filter me-2"></i>No tests found for selected category
+                        <br><small class="text-muted mt-1">Try selecting a different category or "All Categories"</small>
+                    </td>
+                `;
+                tbody.appendChild(emptyRow);
+            } else {
+                existingEmptyRow.style.display = '';
+            }
+        } else {
+            // Hide filtered empty message
+            if (existingEmptyRow) {
+                existingEmptyRow.style.display = 'none';
+            }
+            
+            // Show original empty message if needed
+            if (isOriginallyEmpty && originalEmptyRow && visibleCount === 0) {
+                originalEmptyRow.style.display = '';
+            }
+        }
+        
+        // Update card header with count
+        const cardHeader = document.querySelector('.card-header h5');
+        if (selectedCategory === '') {
+            cardHeader.innerHTML = '<i class="fas fa-list me-1"></i>All Tests';
+        } else {
+            const categoryName = categoryFilter.options[categoryFilter.selectedIndex].text;
+            cardHeader.innerHTML = `<i class="fas fa-list me-1"></i>Tests: ${categoryName} (${visibleCount})`;
+        }
+    });
+    
+    // Add search functionality
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.className = 'form-control';
+    searchInput.placeholder = 'Search tests by name...';
+    searchInput.id = 'testSearch';
+    
+    const searchDiv = document.createElement('div');
+    searchDiv.className = 'col-md-6';
+    searchDiv.innerHTML = '<label for="testSearch" class="form-label">Search Tests:</label>';
+    searchDiv.appendChild(searchInput);
+    
+    // Insert search box next to category filter
+    const filterRow = document.querySelector('.row.mb-4');
+    filterRow.appendChild(searchDiv);
+    
+    // Search functionality
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const testRows = document.querySelectorAll('.test-row');
+        const selectedCategory = categoryFilter.value;
+        let visibleCount = 0;
+        
+        testRows.forEach(row => {
+            const testName = row.cells[1].textContent.toLowerCase();
+            const matchesSearch = testName.includes(searchTerm);
+            const matchesCategory = selectedCategory === '' || row.dataset.categoryId === selectedCategory;
+            
+            if (matchesSearch && matchesCategory) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Update empty state for combined filters
+        updateEmptyState(visibleCount, testRows.length);
+    });
+    
+    function updateEmptyState(visibleCount, totalCount) {
+        const existingEmptyRow = document.querySelector('.no-tests-filtered');
+        
+        if (visibleCount === 0 && totalCount > 0) {
+            if (!existingEmptyRow) {
+                const tbody = document.querySelector('tbody');
+                const emptyRow = document.createElement('tr');
+                emptyRow.className = 'no-tests-filtered';
+                emptyRow.innerHTML = `
+                    <td colspan="7" class="text-center text-muted py-4">
+                        <i class="fas fa-search me-2"></i>No tests match your search criteria
+                        <br><small class="text-muted mt-1">Try adjusting your search terms or filters</small>
+                    </td>
+                `;
+                tbody.appendChild(emptyRow);
+            } else {
+                existingEmptyRow.style.display = '';
+            }
+        } else if (existingEmptyRow) {
+            existingEmptyRow.style.display = 'none';
+        }
+    }
+});
+</script>
 {% endblock %}

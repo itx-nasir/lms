@@ -35,7 +35,7 @@
                                 <small class="text-muted">Age: {{ order.patient.age }}, {{ order.patient.gender }}</small>
                             </td>
                             <td>{{ order.ordered_at.strftime('%Y-%m-%d %H:%M') }}</td>
-                            <td>${{ "%.2f"|format(order.total_amount) }}</td>
+                            <td>PKR {{ "%.2f"|format(order.total_amount) }}</td>
                             <td>
                                 {% if order.status == 'pending' %}
                                     <span class="badge bg-warning">Pending</span>

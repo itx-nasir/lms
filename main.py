@@ -168,14 +168,23 @@ async def delete_patient_endpoint(patient_id: int, user: str = Depends(get_curre
 
 # Test routes
 @app.get("/tests", response_class=HTMLResponse)
-async def tests_page(request: Request, user: str = Depends(get_current_user), db: Session = Depends(get_db)):
+async def tests_page(
+    request: Request, 
+    category_id: Optional[int] = None,
+    user: str = Depends(get_current_user), 
+    db: Session = Depends(get_db)
+):
     categories = crud.get_test_categories(db)
-    tests = crud.get_tests(db)
+    if category_id:
+        tests = crud.get_tests_by_category(db, category_id)
+    else:
+        tests = crud.get_tests(db)
     return templates.TemplateResponse("tests.html", {
         "request": request,
         "user": user,
         "categories": categories,
-        "tests": tests
+        "tests": tests,
+        "selected_category": category_id
     })
 
 @app.post("/test-categories")

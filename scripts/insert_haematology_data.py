@@ -201,7 +201,7 @@ def list_inserted_data():
                 print(f"ID: {test.id}")
                 print(f"Name: {test.name}")
                 print(f"Reference Range: {test.reference_range}")
-                print(f"Price: ${test.price}")
+                print(f\"Price: PKR {test.price}\")
                 print("-" * 40)
         else:
             print("Category 'Haematology & Coagulation' not found!")

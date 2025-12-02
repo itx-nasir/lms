@@ -39,7 +39,7 @@
                                             <strong>{{ test.name }}</strong>
                                             <span class="badge bg-secondary ms-1">{{ test.category.name }}</span>
                                             <br>
-                                            <small class="text-muted">${{ "%.2f"|format(test.price) }}</small>
+                                            <small class="text-muted">PKR {{ "%.2f"|format(test.price) }}</small>
                                         </label>
                                     </div>
                                 </div>
@@ -51,7 +51,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">Order Summary</h5>
                                 <p class="mb-2">Selected Tests: <span id="selectedCount">0</span></p>
-                                <p class="mb-0 fw-bold">Total Amount: $<span id="totalAmount">0.00</span></p>
+                                <p class="mb-0 fw-bold">Total Amount: PKR <span id="totalAmount">0.00</span></p>
                             </div>
                         </div>
 

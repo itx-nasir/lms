@@ -33,7 +33,7 @@
                             </td>
                             <td>{{ order.ordered_at.strftime('%Y-%m-%d %H:%M') }}</td>
                             <td>{{ order.items|length }} tests</td>
-                            <td>${{ "%.2f"|format(order.total_amount) }}</td>
+                            <td>PKR {{ "%.2f"|format(order.total_amount) }}</td>
                             <td>
                                 <a href="/reports/{{ order.id }}" class="btn btn-sm btn-outline-info">
                                     <i class="fas fa-eye"></i> View

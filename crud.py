@@ -71,6 +71,9 @@ def get_tests(db: Session, category_id: Optional[int] = None):
         query = query.filter(Test.category_id == category_id)
     return query.all()
 
+def get_tests_by_category(db: Session, category_id: int):
+    return db.query(Test).filter(Test.category_id == category_id).all()
+
 def get_test(db: Session, test_id: int):
     return db.query(Test).filter(Test.id == test_id).first()
 
