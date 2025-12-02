@@ -152,6 +152,14 @@ def update_order_item_result(db: Session, item_id: int, result_update: TestOrder
         db.refresh(db_item)
     return db_item
 
+def delete_order(db: Session, order_id: int):
+    # Delete order items first (due to foreign key constraints)
+    db.query(TestOrderItem).filter(TestOrderItem.order_id == order_id).delete()
+    # Delete the order
+    db.query(TestOrder).filter(TestOrder.id == order_id).delete()
+    db.commit()
+    return True
+
 # Dashboard stats
 def get_dashboard_stats(db: Session):
     total_patients = db.query(Patient).count()

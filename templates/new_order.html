@@ -13,7 +13,7 @@
                     </h4>
                 </div>
                 <div class="card-body">
-                    <form method="post">
+                    <form method="post" action="/orders">
                         <div class="mb-4">
                             <label for="patient_id" class="form-label">Select Patient</label>
                             <select class="form-select" id="patient_id" name="patient_id" required>
@@ -28,9 +28,29 @@
 
                         <div class="mb-4">
                             <label class="form-label">Select Tests</label>
-                            <div class="row">
+                            
+                            <!-- Search and filter -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" id="testSearch" placeholder="Search tests...">
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-select" id="categoryFilter">
+                                        <option value="">All Categories</option>
+                                        {% set categories = [] %}
+                                        {% for test in tests %}
+                                            {% if test.category.name not in categories %}
+                                                {% set _ = categories.append(test.category.name) %}
+                                                <option value="{{ test.category.name }}">{{ test.category.name }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row" id="testsContainer">
                                 {% for test in tests %}
-                                <div class="col-md-6 mb-2">
+                                <div class="col-md-6 mb-2 test-item" data-category="{{ test.category.name }}" data-name="{{ test.name.lower() }}">
                                     <div class="form-check">
                                         <input class="form-check-input test-checkbox" type="checkbox" 
                                                value="{{ test.id }}" id="test{{ test.id }}" name="test_ids"
@@ -76,6 +96,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectedCountSpan = document.getElementById('selectedCount');
     const totalAmountSpan = document.getElementById('totalAmount');
     const submitBtn = document.getElementById('submitBtn');
+    const testSearch = document.getElementById('testSearch');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const testItems = document.querySelectorAll('.test-item');
 
     function updateSummary() {
         let selectedCount = 0;
@@ -93,8 +116,83 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.disabled = selectedCount === 0;
     }
 
+    function filterTests() {
+        const searchTerm = testSearch.value.toLowerCase();
+        const selectedCategory = categoryFilter.value;
+
+        testItems.forEach(item => {
+            const matchesSearch = item.dataset.name.includes(searchTerm);
+            const matchesCategory = selectedCategory === '' || item.dataset.category === selectedCategory;
+
+            if (matchesSearch && matchesCategory) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    // Event listeners
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', updateSummary);
+    });
+
+    testSearch.addEventListener('input', filterTests);
+    categoryFilter.addEventListener('change', filterTests);
+
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const patientSelect = document.getElementById('patient_id');
+        const selectedTests = document.querySelectorAll('.test-checkbox:checked');
+
+        if (!patientSelect.value) {
+            e.preventDefault();
+            alert('Please select a patient');
+            return false;
+        }
+
+        if (selectedTests.length === 0) {
+            e.preventDefault();
+            alert('Please select at least one test');
+            return false;
+        }
+    });
+
+    // Select all/none buttons
+    const selectAllBtn = document.createElement('button');
+    selectAllBtn.type = 'button';
+    selectAllBtn.className = 'btn btn-sm btn-outline-primary me-2';
+    selectAllBtn.innerHTML = '<i class="fas fa-check-square me-1"></i>Select All Visible';
+    
+    const selectNoneBtn = document.createElement('button');
+    selectNoneBtn.type = 'button';
+    selectNoneBtn.className = 'btn btn-sm btn-outline-secondary';
+    selectNoneBtn.innerHTML = '<i class="fas fa-square me-1"></i>Select None';
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'mb-3';
+    buttonContainer.appendChild(selectAllBtn);
+    buttonContainer.appendChild(selectNoneBtn);
+
+    const testsContainer = document.getElementById('testsContainer');
+    testsContainer.parentNode.insertBefore(buttonContainer, testsContainer);
+
+    selectAllBtn.addEventListener('click', function() {
+        testItems.forEach(item => {
+            if (item.style.display !== 'none') {
+                const checkbox = item.querySelector('.test-checkbox');
+                checkbox.checked = true;
+            }
+        });
+        updateSummary();
+    });
+
+    selectNoneBtn.addEventListener('click', function() {
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        updateSummary();
     });
 });
 </script>
