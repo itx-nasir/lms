@@ -7,36 +7,75 @@ wait_for_db() {
     echo "DATABASE_URL not set, skipping DB wait"
     return 0
   fi
-
   # Only support postgres for wait-for logic here
   if [[ "$DATABASE_URL" == postgresql://* || "$DATABASE_URL" == postgres://* ]]; then
     echo "Waiting for Postgres to accept connections..."
-    # extract host and port
-    # DATABASE_URL expected like: postgres://user:pass@host:port/db
-    host_port=$(echo "$DATABASE_URL" | sed -E 's#.*@([^/]+)/.*#\1#')
-    host=$(echo "$host_port" | cut -d: -f1)
-    port=$(echo "$host_port" | cut -d: -f2)
-    port=${port:-5432}
 
-    # try to connect until successful (using pg_isready if available, otherwise nc)
-    until python - <<PY
-import sys
-import socket
-try:
-    s=socket.create_connection(("${host}", int(${port})), timeout=1)
-    s.close()
-    print('ok')
+    DB_WAIT_TIMEOUT=${DB_WAIT_TIMEOUT:-120}
+    DB_WAIT_INTERVAL=${DB_WAIT_INTERVAL:-1}
+
+    # Use psycopg2 to attempt a real DB connection (better error messages and handles SSL/auth)
+    python - <<PY
+import os, sys, time
+from urllib.parse import urlparse
+url = os.environ.get('DATABASE_URL')
+if not url:
+    print('no_database_url')
     sys.exit(0)
-except Exception as e:
-    print('retry')
-    sys.exit(1)
-PY
-    do
-      echo "Postgres not ready yet - sleeping 1s"
-      sleep 1
-    done
+p = urlparse(url)
+host = p.hostname or 'localhost'
+port = p.port or 5432
+user = p.username or ''
+password = p.password or ''
+dbname = (p.path or '').lstrip('/')
+timeout = int(os.environ.get('DB_WAIT_TIMEOUT', '120'))
+interval = float(os.environ.get('DB_WAIT_INTERVAL', '1'))
+deadline = time.time() + timeout
+try:
+    import psycopg2
+    have_psycopg2 = True
+except Exception:
+    have_psycopg2 = False
 
-    echo "Postgres is available"
+if have_psycopg2:
+    while time.time() < deadline:
+        try:
+            conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=dbname, connect_timeout=5, sslmode=os.environ.get('DB_SSLMODE','prefer'))
+            conn.close()
+            print('ok')
+            sys.exit(0)
+        except Exception as e:
+            msg = str(e).splitlines()[0]
+            print('retry:'+msg)
+            time.sleep(interval)
+    print('timeout')
+    sys.exit(2)
+else:
+    # Fallback: socket connect
+    import socket
+    while time.time() < deadline:
+        try:
+            s = socket.create_connection((host, int(port)), timeout=5)
+            s.close()
+            print('ok')
+            sys.exit(0)
+        except Exception as e:
+            print('retry:'+str(e).splitlines()[0])
+            time.sleep(interval)
+    print('timeout')
+    sys.exit(2)
+PY
+
+    rc=$?
+    if [ "$rc" -eq 0 ]; then
+      echo "Postgres is available"
+    elif [ "$rc" -eq 2 ]; then
+      echo "Timed out waiting for Postgres after ${DB_WAIT_TIMEOUT}s" >&2
+      return 1
+    else
+      echo "Unexpected error while checking Postgres (rc=$rc)" >&2
+      return 1
+    fi
   else
     echo "DATABASE_URL not recognized as postgres, skipping wait"
   fi
