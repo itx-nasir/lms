@@ -15,6 +15,7 @@ RUN apt-get update \
          shared-mime-info \
          fonts-liberation \
          libssl-dev \
+         bash \
      && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -32,6 +33,9 @@ RUN chmod +x /app/entrypoint.sh
 
 ENV PYTHONUNBUFFERED=1
 ENV PORT=8000
+ENV RUN_MIGRATIONS=true
+ENV RUN_SEED_ALL=false
+ENV GUNICORN_WORKERS=1
 
 EXPOSE 8000
 
