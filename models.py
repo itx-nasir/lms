@@ -57,6 +57,7 @@ class TestOrder(Base):
     ordered_at = Column(DateTime, default=datetime.utcnow)
     total_amount = Column(Float, nullable=False, default=0.0)
     status = Column(String(20), nullable=False, default="pending")  # pending/completed
+    referred_by = Column(String(150), nullable=True)
     
     # Relationships
     patient = relationship("Patient", back_populates="orders")

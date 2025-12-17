@@ -90,6 +90,39 @@ body {
     .table th, .table td { border: 1px solid #000 !important; }
 }
 
+/* Report specific styles */
+.report-header {
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding-bottom: 0.75rem;
+}
+.report-title {
+    font-size: 1.6rem;
+    margin-bottom: 0.2rem;
+    color: #0b5ed7;
+    letter-spacing: 0.2px;
+}
+.report-sub {
+    margin: 0;
+    color: #495057;
+    font-weight: 500;
+}
+
+.patient-block { background: #fff; }
+.patient-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    align-items: center;
+}
+.patient-item { min-width: 160px; }
+.patient-item .label { font-weight: 600; color: #333; margin-right: 0.35rem; }
+.patient-item .value { color: #212529; }
+
+@media print {
+    .report-header { border-bottom: none; }
+    .patient-info { gap: 0.5rem 1rem; }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .table-responsive { font-size: 0.875rem; }

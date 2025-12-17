@@ -263,6 +263,7 @@ async def new_order_page(request: Request, user: str = Depends(get_current_user)
 async def create_order_endpoint(
     request: Request,
     patient_id: int = Form(...),
+    referred_by: Optional[str] = Form(None),
     user: str = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -272,7 +273,7 @@ async def create_order_endpoint(
     if not test_ids:
         return RedirectResponse(url="/orders/new", status_code=302)
     
-    order_data = schemas.TestOrderCreate(patient_id=patient_id, test_ids=test_ids)
+    order_data = schemas.TestOrderCreate(patient_id=patient_id, test_ids=test_ids, referred_by=referred_by)
     crud.create_order(db, order_data)
     return RedirectResponse(url="/orders", status_code=302)
 

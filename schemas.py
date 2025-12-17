@@ -78,6 +78,7 @@ class TestOrderItem(TestOrderItemBase):
 class TestOrderBase(BaseModel):
     patient_id: int
     status: str = "pending"
+    referred_by: Optional[str] = None
 
 class TestOrderCreate(TestOrderBase):
     test_ids: List[int]

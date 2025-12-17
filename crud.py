@@ -116,7 +116,8 @@ def create_order(db: Session, order: TestOrderCreate):
     db_order = TestOrder(
         patient_id=order.patient_id,
         total_amount=total_amount,
-        status=order.status
+        status=order.status,
+        referred_by=getattr(order, 'referred_by', None)
     )
     db.add(db_order)
     db.flush()  # Get the order ID
