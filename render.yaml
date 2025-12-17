@@ -1,0 +1,13 @@
+# Basic Render service manifest. Review and adjust before use.
+services:
+  - type: web
+    name: lms-web
+    env: python
+    region: oregon
+    plan: starter
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn -w 1 -k uvicorn.workers.UvicornWorker main:app"
+
+# Note: Render provides managed databases separately. Create a PostgreSQL
+# instance via the Render dashboard and attach it to this service as
+# the environment variable DATABASE_URL.
