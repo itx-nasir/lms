@@ -2,17 +2,20 @@ FROM python:3.11-slim
 
 # Install system dependencies required by WeasyPrint and common image libraries
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-       build-essential \
-       libcairo2 \
-       libpango-1.0-0 \
-       libpangocairo-1.0-0 \
-       libgdk-pixbuf2.0-0 \
-       libffi-dev \
-       shared-mime-info \
-       fonts-liberation \
-       libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
+     && apt-get install -y --no-install-recommends \
+         build-essential \
+        python3-dev \
+        ca-certificates \
+        wget \
+         libcairo2-dev \
+         libpango1.0-dev \
+         libpangocairo-1.0-0 \
+         libgdk-pixbuf-xlib-2.0-dev \
+         libffi-dev \
+         shared-mime-info \
+         fonts-liberation \
+         libssl-dev \
+     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
