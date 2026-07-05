@@ -123,6 +123,136 @@ body {
     .patient-info { gap: 0.5rem 1rem; }
 }
 
+/* ── Dashboard ──────────────────────────────────────────────────────────── */
+.stat-card { transition: transform 0.15s, box-shadow 0.15s; }
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 0.5rem 1rem rgba(0,0,0,.1) !important; }
+.stat-icon { display: flex; align-items: center; justify-content: center; min-width: 3rem; min-height: 3rem; }
+.quick-action-card { transition: transform 0.15s, box-shadow 0.15s; }
+.quick-action-card:hover { transform: translateY(-2px); box-shadow: 0 0.5rem 1rem rgba(0,0,0,.1) !important; }
+
+/* ── New-Order: Panel & Test Selector ──────────────────────────────────── */
+
+/* Category tab scroll wrapper */
+.cat-tabs-scroll {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #dee2e6 transparent;
+}
+.cat-tabs-scroll::-webkit-scrollbar { height: 4px; }
+.cat-tabs-scroll::-webkit-scrollbar-thumb { background: #dee2e6; border-radius: 4px; }
+
+/* Category section header (shown in "All" view) */
+.cat-section-hdr {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6c757d;
+  padding: 0.4rem 0.25rem 0.3rem;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 0.5rem;
+}
+
+/* Panel card */
+.panel-card {
+  border: 1px solid #e9ecef !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.panel-card:hover { border-color: #c3d8f8 !important; }
+.panel-card.panel-has-sel {
+  border-color: #86b7fe !important;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.1) !important;
+}
+
+/* Panel header row */
+.panel-hdr {
+  background: #f8f9fa;
+  cursor: pointer;
+  border-bottom: 1px solid #e9ecef;
+  min-height: 2.6rem;
+  transition: background 0.12s;
+}
+.panel-hdr:hover { background: #eef3fb; }
+.panel-has-sel .panel-hdr { background: #f0f5ff; }
+
+.panel-label { font-size: 0.9rem; cursor: pointer; }
+.panel-badge { font-size: 0.72rem; }
+
+/* Individual test item (clickable card) */
+.test-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+  margin: 0;
+  min-height: 2.2rem;
+}
+.test-item:hover {
+  background: #f0f5ff;
+  border-color: #b6d0fe;
+}
+.test-item-sel {
+  background: #e8f0fe !important;
+  border-color: #4285f4 !important;
+}
+.test-param {
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.test-price {
+  font-size: 0.72rem;
+  color: #198754;
+  font-weight: 600;
+}
+
+/* Popular quick-select buttons */
+.btn-xs {
+  font-size: 0.78rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-weight: 500;
+}
+.popular-btn {
+  border: 1.5px solid #0d6efd;
+  color: #0d6efd;
+  background: #fff;
+  white-space: nowrap;
+  transition: all 0.12s;
+}
+.popular-btn:hover, .popular-btn-active {
+  background: #0d6efd;
+  color: #fff;
+  border-color: #0d6efd;
+}
+
+/* Order summary sidebar */
+.summary-group { border-bottom: 1px solid #e9ecef; padding-bottom: 0.4rem; }
+.summary-group:last-child { border-bottom: none; }
+.summary-panel-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0d6efd;
+  margin-bottom: 0.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.summary-test-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.82rem;
+}
+.summary-test-row:hover { background: #f8f9fa; border-radius: 4px; }
+
 /* Responsive */
 @media (max-width: 768px) {
     .table-responsive { font-size: 0.875rem; }
