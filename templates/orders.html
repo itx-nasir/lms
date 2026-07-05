@@ -1,185 +1,792 @@
 {% extends "base.html" %}
 
-{% block title %}Orders - Lab Management System{% endblock %}
+{% block title %}
+  {% if view == 'new' %}New Order
+  {% elif view == 'detail' %}Order ORD-{{ order.id }}
+  {% else %}Orders
+  {% endif %} – Lab Management System
+{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1><i class="fas fa-clipboard-list me-2"></i>Test Orders</h1>
-        <a href="/orders/new" class="btn btn-primary">
-            <i class="fas fa-plus me-1"></i>New Order
-        </a>
-    </div>
 
-    <!-- Filters -->
-    <div class="row mb-4">
-        <div class="col-md-4">
-            <label for="statusFilter" class="form-label">Filter by Status:</label>
-            <select class="form-select" id="statusFilter">
-                <option value="">All Orders</option>
-                <option value="pending">Pending</option>
-                <option value="completed">Completed</option>
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label for="patientSearch" class="form-label">Search by Patient:</label>
-            <input type="text" class="form-control" id="patientSearch" placeholder="Enter patient name...">
-        </div>
-        <div class="col-md-4">
-            <label for="dateFilter" class="form-label">Filter by Date:</label>
-            <input type="date" class="form-control" id="dateFilter">
-        </div>
-    </div>
+{# ═══════════════════════════════════════════════════════════════════════ #}
+{#  VIEW: LIST                                                             #}
+{# ═══════════════════════════════════════════════════════════════════════ #}
+{% if view == 'list' %}
+<div class="container-fluid">
 
-    <!-- Orders Table -->
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-primary">
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Patient</th>
-                            <th>Ordered Date</th>
-                            <th>Total Amount</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for order in orders %}
-                        <tr class="order-row" 
-                            data-status="{{ order.status }}" 
-                            data-patient="{{ order.patient.name.lower() }}"
-                            data-date="{{ order.ordered_at.strftime('%Y-%m-%d') }}">
-                            <td>ORD-{{ order.id }}</td>
-                            <td>
-                                <strong>{{ order.patient.name }}</strong><br>
-                                <small class="text-muted">Age: {{ order.patient.age }}, {{ order.patient.gender }}</small>
-                            </td>
-                            <td>{{ order.ordered_at.strftime('%Y-%m-%d %H:%M') }}</td>
-                            <td>PKR {{ "%.2f"|format(order.total_amount) }}</td>
-                            <td>
-                                {% if order.status == 'pending' %}
-                                    <span class="badge bg-warning">Pending</span>
-                                {% else %}
-                                    <span class="badge bg-success">Completed</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a href="/orders/{{ order.id }}" class="btn btn-sm btn-outline-info">
-                                    <i class="fas fa-eye"></i> View
-                                </a>
-                                {% if order.status == 'pending' %}
-                                <form method="post" action="/orders/{{ order.id }}/complete" class="d-inline">
-                                    <button type="submit" class="btn btn-sm btn-outline-success" 
-                                            onclick="return confirm('Mark this order as completed?')">
-                                        <i class="fas fa-check"></i> Complete
-                                    </button>
-                                </form>
-                                <form method="post" action="/orders/{{ order.id }}/delete" class="d-inline">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                            onclick="return confirm('Are you sure you want to delete this order? This action cannot be undone.')">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </form>
-                                {% else %}
-                                <a href="/reports/{{ order.id }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-file-alt"></i> Report
-                                </a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                No orders found
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h4 class="fw-bold mb-0"><i class="fas fa-clipboard-list me-2 text-primary"></i>Test Orders</h4>
+      <small class="text-muted">All lab test orders, newest first</small>
     </div>
+    <a href="/orders/new" class="btn btn-primary px-4">
+      <i class="fas fa-plus me-1"></i>New Order
+    </a>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-4">
+    <div class="card-body py-3">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold text-muted mb-1">Status</label>
+          <select class="form-select form-select-sm" id="statusFilter">
+            <option value="">All Orders</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold text-muted mb-1">Patient Name</label>
+          <input type="text" class="form-control form-control-sm" id="patientSearch" placeholder="Search patient…">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small fw-semibold text-muted mb-1">Date</label>
+          <input type="date" class="form-control form-control-sm" id="dateFilter">
+        </div>
+        <div class="col-md-1 text-end">
+          <button type="button" class="btn btn-sm btn-outline-secondary w-100" id="clearFilters" title="Clear filters">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="card">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr class="table-light">
+              <th class="ps-4">Order ID</th>
+              <th>Patient</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th class="pe-4">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+            <tr class="order-row align-middle"
+                data-status="{{ order.status }}"
+                data-patient="{{ order.patient.name.lower() }}"
+                data-date="{{ order.ordered_at.strftime('%Y-%m-%d') }}">
+              <td class="ps-4 fw-bold text-primary">ORD-{{ order.id }}</td>
+              <td>
+                <div class="fw-semibold">{{ order.patient.name }}</div>
+                <small class="text-muted">Age {{ order.patient.age }} · {{ order.patient.gender }}</small>
+              </td>
+              <td>
+                <div>{{ order.ordered_at.strftime('%d %b %Y') }}</div>
+                <small class="text-muted">{{ order.ordered_at.strftime('%H:%M') }}</small>
+              </td>
+              <td class="fw-semibold text-success">PKR {{ "%.0f"|format(order.total_amount) }}</td>
+              <td>
+                {% if order.status == 'pending' %}
+                  <span class="badge bg-warning text-dark">Pending</span>
+                {% else %}
+                  <span class="badge bg-success">Completed</span>
+                {% endif %}
+              </td>
+              <td class="pe-4">
+                <div class="d-flex gap-1">
+                  <a href="/orders/{{ order.id }}" class="btn btn-sm btn-outline-secondary" title="View details">
+                    <i class="fas fa-eye"></i>
+                  </a>
+                  {% if order.status == 'pending' %}
+                  <form method="post" action="/orders/{{ order.id }}/complete" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-success" title="Mark completed"
+                            onclick="return confirm('Mark this order as completed?')">
+                      <i class="fas fa-check"></i>
+                    </button>
+                  </form>
+                  <form method="post" action="/orders/{{ order.id }}/delete" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"
+                            onclick="return confirm('Delete this order? This cannot be undone.')">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </form>
+                  {% else %}
+                  <a href="/reports/{{ order.id }}" class="btn btn-sm btn-outline-primary" title="View report">
+                    <i class="fas fa-file-alt"></i>
+                  </a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="6" class="text-center text-muted py-5">
+                <i class="fas fa-clipboard-list fa-2x d-block mb-2 text-light"></i>
+                No orders yet. <a href="/orders/new">Create the first one →</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const statusFilter = document.getElementById('statusFilter');
-    const patientSearch = document.getElementById('patientSearch');
-    const dateFilter = document.getElementById('dateFilter');
-    const orderRows = document.querySelectorAll('.order-row');
+(function () {
+  const statusFilter  = document.getElementById('statusFilter');
+  const patientSearch = document.getElementById('patientSearch');
+  const dateFilter    = document.getElementById('dateFilter');
+  const rows          = document.querySelectorAll('.order-row');
 
-    function filterOrders() {
-        const selectedStatus = statusFilter.value;
-        const searchTerm = patientSearch.value.toLowerCase();
-        const selectedDate = dateFilter.value;
-        let visibleCount = 0;
-
-        orderRows.forEach(row => {
-            const matchesStatus = selectedStatus === '' || row.dataset.status === selectedStatus;
-            const matchesPatient = searchTerm === '' || row.dataset.patient.includes(searchTerm);
-            const matchesDate = selectedDate === '' || row.dataset.date === selectedDate;
-
-            if (matchesStatus && matchesPatient && matchesDate) {
-                row.style.display = '';
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
-            }
-        });
-
-        // Update empty state
-        updateEmptyState(visibleCount);
-    }
-
-    function updateEmptyState(visibleCount) {
-        const existingEmptyRow = document.querySelector('.no-orders-filtered');
-        const tbody = document.querySelector('tbody');
-
-        if (visibleCount === 0 && orderRows.length > 0) {
-            if (!existingEmptyRow) {
-                const emptyRow = document.createElement('tr');
-                emptyRow.className = 'no-orders-filtered';
-                emptyRow.innerHTML = `
-                    <td colspan="6" class="text-center text-muted py-4">
-                        <i class="fas fa-filter me-2"></i>No orders match your filters
-                        <br><small class="text-muted mt-1">Try adjusting your search criteria</small>
-                    </td>
-                `;
-                tbody.appendChild(emptyRow);
-            } else {
-                existingEmptyRow.style.display = '';
-            }
-        } else if (existingEmptyRow) {
-            existingEmptyRow.style.display = 'none';
-        }
-    }
-
-    // Event listeners
-    statusFilter.addEventListener('change', filterOrders);
-    patientSearch.addEventListener('input', filterOrders);
-    dateFilter.addEventListener('change', filterOrders);
-
-    // Clear filters button
-    const clearFiltersBtn = document.createElement('button');
-    clearFiltersBtn.type = 'button';
-    clearFiltersBtn.className = 'btn btn-outline-secondary';
-    clearFiltersBtn.innerHTML = '<i class="fas fa-times me-1"></i>Clear Filters';
-    
-    const filterRow = document.querySelector('.row.mb-4');
-    const clearDiv = document.createElement('div');
-    clearDiv.className = 'col-12 mt-2';
-    clearDiv.appendChild(clearFiltersBtn);
-    filterRow.appendChild(clearDiv);
-
-    clearFiltersBtn.addEventListener('click', function() {
-        statusFilter.value = '';
-        patientSearch.value = '';
-        dateFilter.value = '';
-        filterOrders();
+  function filter() {
+    const st   = statusFilter.value;
+    const pt   = patientSearch.value.toLowerCase();
+    const dt   = dateFilter.value;
+    let visible = 0;
+    rows.forEach(r => {
+      const show = (!st || r.dataset.status === st)
+                && (!pt || r.dataset.patient.includes(pt))
+                && (!dt || r.dataset.date === dt);
+      r.style.display = show ? '' : 'none';
+      if (show) visible++;
     });
-});
+    let emptyRow = document.querySelector('.no-match-row');
+    if (visible === 0 && rows.length > 0) {
+      if (!emptyRow) {
+        emptyRow = document.createElement('tr');
+        emptyRow.className = 'no-match-row';
+        emptyRow.innerHTML = '<td colspan="6" class="text-center text-muted py-4"><i class="fas fa-filter me-2"></i>No orders match your filters</td>';
+        document.querySelector('tbody').appendChild(emptyRow);
+      }
+      emptyRow.style.display = '';
+    } else if (emptyRow) {
+      emptyRow.style.display = 'none';
+    }
+  }
+
+  statusFilter.addEventListener('change', filter);
+  patientSearch.addEventListener('input', filter);
+  dateFilter.addEventListener('change', filter);
+  document.getElementById('clearFilters').addEventListener('click', () => {
+    statusFilter.value = '';
+    patientSearch.value = '';
+    dateFilter.value = '';
+    filter();
+  });
+})();
 </script>
+
+
+{# ═══════════════════════════════════════════════════════════════════════ #}
+{#  VIEW: DETAIL                                                           #}
+{# ═══════════════════════════════════════════════════════════════════════ #}
+{% elif view == 'detail' %}
+<div class="container-fluid">
+
+  <!-- Header -->
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+    <div>
+      <h4 class="fw-bold mb-0"><i class="fas fa-file-medical me-2 text-primary"></i>Order ORD-{{ order.id }}</h4>
+      <small class="text-muted">Placed {{ order.ordered_at.strftime('%B %d, %Y at %H:%M') }}</small>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      {% if order.status == 'pending' %}
+      <form method="post" action="/orders/{{ order.id }}/complete" class="d-inline">
+        <button type="submit" class="btn btn-success"
+                onclick="return confirm('Mark this order as completed?')">
+          <i class="fas fa-check-circle me-1"></i>Mark Completed
+        </button>
+      </form>
+      <form method="post" action="/orders/{{ order.id }}/delete" class="d-inline">
+        <button type="submit" class="btn btn-outline-danger"
+                onclick="return confirm('Delete this order? This cannot be undone.')">
+          <i class="fas fa-trash me-1"></i>Delete
+        </button>
+      </form>
+      {% endif %}
+      {% if order.status == 'completed' %}
+      <a href="/reports/{{ order.id }}" class="btn btn-outline-primary">
+        <i class="fas fa-file-alt me-1"></i>View Report
+      </a>
+      <a href="/reports/{{ order.id }}/pdf" class="btn btn-primary">
+        <i class="fas fa-download me-1"></i>Download PDF
+      </a>
+      {% endif %}
+      <a href="/orders" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-1"></i>Back
+      </a>
+    </div>
+  </div>
+
+  <!-- Info cards row -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header py-2">
+          <h6 class="mb-0 fw-bold"><i class="fas fa-info-circle me-2 text-primary"></i>Order Info</h6>
+        </div>
+        <div class="card-body">
+          <dl class="row mb-0 small">
+            <dt class="col-5 text-muted fw-normal">Order ID</dt>
+            <dd class="col-7 fw-semibold">ORD-{{ order.id }}</dd>
+            <dt class="col-5 text-muted fw-normal">Date</dt>
+            <dd class="col-7">{{ order.ordered_at.strftime('%B %d, %Y') }}</dd>
+            <dt class="col-5 text-muted fw-normal">Status</dt>
+            <dd class="col-7">
+              {% if order.status == 'pending' %}
+                <span class="badge bg-warning text-dark">Pending</span>
+              {% else %}
+                <span class="badge bg-success">Completed</span>
+              {% endif %}
+            </dd>
+            <dt class="col-5 text-muted fw-normal">Total</dt>
+            <dd class="col-7 fw-bold text-success">PKR {{ "%.0f"|format(order.total_amount) }}</dd>
+            {% if order.referred_by %}
+            <dt class="col-5 text-muted fw-normal">Referred By</dt>
+            <dd class="col-7">{{ order.referred_by }}</dd>
+            {% endif %}
+          </dl>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header py-2">
+          <h6 class="mb-0 fw-bold"><i class="fas fa-user me-2 text-primary"></i>Patient</h6>
+        </div>
+        <div class="card-body">
+          <dl class="row mb-0 small">
+            <dt class="col-4 text-muted fw-normal">Name</dt>
+            <dd class="col-8 fw-semibold">{{ order.patient.name }}</dd>
+            <dt class="col-4 text-muted fw-normal">Age</dt>
+            <dd class="col-8">{{ order.patient.age }} years</dd>
+            <dt class="col-4 text-muted fw-normal">Gender</dt>
+            <dd class="col-8">{{ order.patient.gender }}</dd>
+            <dt class="col-4 text-muted fw-normal">Phone</dt>
+            <dd class="col-8">{{ order.patient.phone }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ordered tests grouped by panel -->
+  <div class="card">
+    <div class="card-header py-2">
+      <h6 class="mb-0 fw-bold"><i class="fas fa-vial me-2 text-primary"></i>Ordered Tests</h6>
+    </div>
+    <div class="card-body p-0">
+      {% for group in group_order_items(order) %}
+      <div class="{% if not loop.last %}border-bottom{% endif %}">
+        <div class="px-4 py-2 bg-light d-flex align-items-center gap-2">
+          <i class="fas fa-layer-group text-primary small"></i>
+          <span class="fw-bold small text-primary">{{ group.label }}</span>
+          <span class="badge bg-light text-secondary border ms-auto">{{ group['items']|length }} test{{ 's' if group['items']|length != 1 }}</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover table-sm mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="ps-4">Test Name</th>
+                <th>Category</th>
+                <th>Unit Price</th>
+                <th>Unit</th>
+                <th>Ref. Range</th>
+                {% if order.status == 'completed' %}
+                <th>Result</th>
+                <th>Notes</th>
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in group['items'] %}
+              <tr>
+                <td class="ps-4 fw-semibold">{{ item.test.name }}</td>
+                <td><span class="badge bg-secondary">{{ item.test.category.name }}</span></td>
+                <td>PKR {{ "%.0f"|format(item.unit_price) }}</td>
+                <td class="text-muted">{{ item.test.unit or '—' }}</td>
+                <td class="text-muted small">{{ item.test.reference_range or '—' }}</td>
+                {% if order.status == 'completed' %}
+                <td>{{ item.result_value or '—' }}</td>
+                <td class="text-muted small">{{ item.result_notes or '—' }}</td>
+                {% endif %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
+
+{# ═══════════════════════════════════════════════════════════════════════ #}
+{#  VIEW: NEW ORDER FORM                                                   #}
+{# ═══════════════════════════════════════════════════════════════════════ #}
+{% elif view == 'new' %}
+<div class="no-page-pad">
+
+  <!-- Hero -->
+  <div class="order-hero">
+    <div class="order-hero-inner">
+      <div class="d-flex align-items-center gap-3">
+        <div class="order-hero-icon">
+          <i class="fas fa-flask-vial"></i>
+        </div>
+        <div>
+          <h1 class="order-hero-title">Create New Order</h1>
+          <p class="order-hero-sub">Select a patient, choose tests, and place the order in seconds.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="order-body">
+    <div class="row g-4 align-items-start">
+
+      <!-- LEFT: form -->
+      <div class="col-lg-8">
+
+        <!-- Step 1: Patient -->
+        <div class="order-card mb-4">
+          <div class="order-card-header">
+            <div class="step-pill">1</div>
+            <div>
+              <div class="order-card-title">Patient Details</div>
+              <div class="order-card-sub">Who is this order for?</div>
+            </div>
+          </div>
+          <div class="order-card-body">
+            <form method="post" action="/orders" id="orderForm">
+              <div class="row g-3">
+                <div class="col-md-8">
+                  <label class="field-label" for="patient_id">
+                    <i class="fas fa-user-circle"></i> Patient
+                  </label>
+                  <div class="select-wrap">
+                    <select class="premium-select" id="patient_id" name="patient_id" required>
+                      <option value="">— Choose a patient —</option>
+                      {% for patient in patients %}
+                      <option value="{{ patient.id }}">
+                        {{ patient.name }} · Age {{ patient.age }} · {{ patient.gender }} · {{ patient.phone }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                    <i class="fas fa-chevron-down select-arrow"></i>
+                  </div>
+                  <div class="field-error" id="patientError">Please select a patient.</div>
+                  {% if not patients %}
+                  <div class="field-hint danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    No patients found. <a href="/patients" class="link-gold">Add a patient first →</a>
+                  </div>
+                  {% endif %}
+                </div>
+                <div class="col-md-4">
+                  <label class="field-label" for="referred_by">
+                    <i class="fas fa-stethoscope"></i> Referred By
+                    <span class="field-label-opt">(optional)</span>
+                  </label>
+                  <input type="text" class="premium-input" id="referred_by" name="referred_by"
+                         placeholder="Dr. Ahmed…" />
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Step 2: Tests -->
+        <div class="order-card">
+          <div class="order-card-header">
+            <div class="step-pill">2</div>
+            <div>
+              <div class="order-card-title">Select Tests</div>
+              <div class="order-card-sub">Pick test groups or individual tests below</div>
+            </div>
+          </div>
+          <div class="order-card-body">
+
+            <!-- Search -->
+            <div class="search-bar-wrap mb-4">
+              <i class="fas fa-search search-icon"></i>
+              <input type="text" class="search-bar" id="testSearch"
+                     placeholder='Search, e.g. "CBC" or "Blood Sugar"…'>
+              <button class="search-clear" type="button" id="clearSearch" style="display:none">
+                <i class="fas fa-times-circle"></i>
+              </button>
+            </div>
+
+            <!-- Category pills -->
+            <div class="cat-scroll mb-4">
+              <div class="d-flex gap-2 flex-nowrap" id="categoryTabs"></div>
+            </div>
+
+            <!-- Test Groups -->
+            <div id="panelSection" class="mb-5">
+              <div class="section-hdr">
+                <i class="fas fa-layer-group section-hdr-icon"></i>
+                <span>Test Groups</span>
+                <span class="section-hdr-hint">— Click a card to select all included tests</span>
+              </div>
+              <div class="row g-3" id="panelGrid"></div>
+            </div>
+
+            <!-- Individual Tests -->
+            <div id="soloSection">
+              <div class="section-hdr">
+                <i class="fas fa-vial section-hdr-icon"></i>
+                <span>Individual Tests</span>
+              </div>
+              <div class="row g-2" id="soloGrid"></div>
+            </div>
+
+            <!-- No results -->
+            <div id="noResults" class="no-results-state d-none">
+              <i class="fas fa-search-minus no-results-icon"></i>
+              <div class="no-results-title">No tests found</div>
+              <div class="no-results-sub">Try a different keyword or clear the search</div>
+              <button type="button" class="btn-clear-search" id="clearSearchLink">
+                <i class="fas fa-times me-1"></i>Clear Search
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Summary -->
+      <div class="col-lg-4">
+        <div class="summary-panel sticky-top" style="top: 1.25rem;">
+          <div class="summary-panel-header">
+            <div class="summary-header-left">
+              <i class="fas fa-receipt summary-header-icon"></i>
+              <span>Order Summary</span>
+            </div>
+          </div>
+          <div class="summary-stats">
+            <div class="summary-stat">
+              <div class="summary-stat-num" id="selectedCount">0</div>
+              <div class="summary-stat-lbl">Tests</div>
+            </div>
+            <div class="summary-stat-divider"></div>
+            <div class="summary-stat">
+              <div class="summary-stat-num summary-stat-price">PKR <span id="totalAmount">0</span></div>
+              <div class="summary-stat-lbl">Total</div>
+            </div>
+          </div>
+          <div class="summary-list" id="selectedTestsList">
+            <div class="summary-empty">
+              <i class="fas fa-clipboard-list summary-empty-icon"></i>
+              <div class="summary-empty-title">Nothing selected yet</div>
+              <div class="summary-empty-sub">Choose tests from the left panel</div>
+            </div>
+          </div>
+          <div class="summary-actions">
+            <button type="submit" class="btn-place-order" id="submitBtn" disabled form="orderForm">
+              <i class="fas fa-check-circle me-2"></i>Place Order
+            </button>
+            <a href="/orders" class="btn-back-orders">
+              <i class="fas fa-arrow-left me-1"></i>Back to Orders
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- No-selection toast -->
+<div id="noSelAlert" class="order-alert d-none">
+  <i class="fas fa-exclamation-triangle me-2"></i>
+  Please select at least one test or test group first.
+</div>
+
+<!-- JSON catalog (Markup-safe) -->
+<script id="panelsJson" type="application/json">{{ panels_data|tojson }}</script>
+<script id="testsJson"  type="application/json">{{ tests_data|tojson }}</script>
+
+<script>
+(function () {
+'use strict';
+
+let PANELS = [], SOLO_TESTS = [];
+try {
+  PANELS     = JSON.parse(document.getElementById('panelsJson').textContent);
+  SOLO_TESTS = JSON.parse(document.getElementById('testsJson').textContent);
+} catch(e) { console.error('Catalog JSON parse error:', e); }
+
+const CATS = [...new Set([
+  ...PANELS.map(p => p.category),
+  ...SOLO_TESTS.map(t => t.category)
+])].filter(Boolean);
+
+const selPanels = new Set(), selTests = new Set();
+let activeCat = '', search = '';
+const expanded = new Set();
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function money(n) { return Number(n||0).toLocaleString('en-PK', {maximumFractionDigits:0}); }
+function matchesFilter(name, cat) {
+  if (activeCat && cat !== activeCat) return false;
+  return !search || name.toLowerCase().includes(search);
+}
+function panelMatchesFilter(p) {
+  if (activeCat && p.category !== activeCat) return false;
+  if (!search) return true;
+  if (p.name.toLowerCase().includes(search)) return true;
+  return (p.tests||[]).some(t => t.toLowerCase().includes(search));
+}
+
+const COLORS = {
+  'Haematology':'#e74c3c','Biochemistry':'#3498db','Microbiology':'#2ecc71',
+  'Serology':'#9b59b6','Hormones':'#e67e22','Urine':'#1abc9c'
+};
+const ICONS = {
+  'Haematology':'fa-droplet','Biochemistry':'fa-flask','Microbiology':'fa-bacterium',
+  'Serology':'fa-shield-virus','Hormones':'fa-dna','Urine':'fa-vial'
+};
+function catColor(c) { return COLORS[c]||'#6c757d'; }
+function catIcon(c)  { return ICONS[c]||'fa-vials'; }
+
+function buildCategoryTabs() {
+  const wrap = document.getElementById('categoryTabs');
+  wrap.innerHTML = '';
+  function countFor(cat) {
+    return PANELS.filter(p=>!cat||p.category===cat).length
+         + SOLO_TESTS.filter(t=>!cat||t.category===cat).length;
+  }
+  function makeTab(label, value) {
+    const active = activeCat===value;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cat-pill' + (active ? ' cat-pill-active' : '');
+    btn.innerHTML = `${esc(label)} <span class="cat-pill-badge">${countFor(value)}</span>`;
+    btn.onclick = () => { activeCat = value; buildAll(); };
+    wrap.appendChild(btn);
+  }
+  makeTab('All','');
+  CATS.forEach(cat => makeTab(cat, cat));
+}
+
+function buildPanelGrid() {
+  const grid = document.getElementById('panelGrid');
+  const section = document.getElementById('panelSection');
+  grid.innerHTML = '';
+  const visible = PANELS.filter(panelMatchesFilter);
+  section.classList.toggle('d-none', visible.length === 0);
+  visible.forEach(p => {
+    const isSel = selPanels.has(p.id), isOpen = expanded.has(p.id);
+    const color = catColor(p.category), icon = catIcon(p.category);
+    const tests = p.tests||[];
+    const col = document.createElement('div');
+    col.className = 'col-sm-6 col-xl-4';
+    col.innerHTML = `
+      <div class="pcard ${isSel?'pcard-sel':''}" tabindex="0" role="button"
+           data-id="${p.id}" style="--pcolor:${color}">
+        <div class="pcard-top">
+          <div class="pcard-icon-wrap" style="background:${color}18">
+            <i class="fas ${icon} pcard-icon" style="color:${color}"></i>
+          </div>
+          <div class="pcard-sel-check ${isSel?'pcard-sel-check-on':''}">
+            <i class="fas ${isSel?'fa-check-circle':'fa-circle'}"></i>
+          </div>
+        </div>
+        <div class="pcard-name">${esc(p.name)}</div>
+        <div class="pcard-meta">
+          <span class="pcard-count">${tests.length} test${tests.length!==1?'s':''}</span>
+          ${p.price>0?`<span class="pcard-price">PKR ${money(p.price)}</span>`:''}
+        </div>
+        ${tests.length>0?`
+        <button type="button" class="pcard-toggle-btn">
+          ${isOpen?"Hide tests":"See what's included"}
+          <i class="fas fa-chevron-${isOpen?'up':'down'} ms-1" style="font-size:.6rem"></i>
+        </button>
+        <div class="pcard-tests ${isOpen?'':'d-none'}">
+          ${tests.map(t=>`<span class="test-chip">${esc(t)}</span>`).join('')}
+        </div>`:''}
+      </div>`;
+    const card = col.querySelector('.pcard');
+    card.addEventListener('click', e => {
+      if (e.target.closest('.pcard-toggle-btn')) return;
+      if (selPanels.has(p.id)) selPanels.delete(p.id); else selPanels.add(p.id);
+      buildAll();
+    });
+    card.addEventListener('keydown', e => {
+      if (e.key==='Enter'||e.key===' ') { e.preventDefault(); card.click(); }
+    });
+    const tb = col.querySelector('.pcard-toggle-btn');
+    if (tb) tb.addEventListener('click', e => {
+      e.stopPropagation();
+      if (expanded.has(p.id)) expanded.delete(p.id); else expanded.add(p.id);
+      buildAll();
+    });
+    grid.appendChild(col);
+  });
+}
+
+function buildSoloGrid() {
+  const grid = document.getElementById('soloGrid');
+  const section = document.getElementById('soloSection');
+  grid.innerHTML = '';
+  const visible = SOLO_TESTS.filter(t => matchesFilter(t.name, t.category));
+  section.classList.toggle('d-none', visible.length === 0);
+  visible.forEach(t => {
+    const isSel = selTests.has(t.id);
+    const col = document.createElement('div');
+    col.className = 'col-6 col-md-4 col-lg-3';
+    col.innerHTML = `
+      <label class="tpill ${isSel?'tpill-sel':''}" for="ti-${t.id}">
+        <input type="checkbox" class="tpill-cb" id="ti-${t.id}" value="${t.id}" ${isSel?'checked':''}>
+        <span class="tpill-check"><i class="fas ${isSel?'fa-check-circle':'fa-circle'}"></i></span>
+        <span class="tpill-body">
+          <span class="tpill-name">${esc(t.name)}</span>
+          ${t.price>0?`<span class="tpill-price">PKR ${money(t.price)}</span>`:''}
+        </span>
+      </label>`;
+    col.querySelector('.tpill-cb').addEventListener('change', function() {
+      if (this.checked) selTests.add(t.id); else selTests.delete(t.id);
+      buildAll();
+    });
+    grid.appendChild(col);
+  });
+}
+
+function updateSummary() {
+  const chosenPanels = PANELS.filter(p => selPanels.has(p.id));
+  const chosenTests  = SOLO_TESTS.filter(t => selTests.has(t.id));
+  const testCount = chosenPanels.reduce((n,p)=>n+(p.tests||[]).length,0)+chosenTests.length;
+  const total = chosenPanels.reduce((s,p)=>s+p.price,0)+chosenTests.reduce((s,t)=>s+t.price,0);
+
+  document.getElementById('selectedCount').textContent = testCount;
+  document.getElementById('totalAmount').textContent   = money(total);
+  document.getElementById('submitBtn').disabled = (chosenPanels.length+chosenTests.length)===0;
+
+  const list = document.getElementById('selectedTestsList');
+  if (!chosenPanels.length && !chosenTests.length) {
+    list.innerHTML = `<div class="summary-empty">
+      <i class="fas fa-clipboard-list summary-empty-icon"></i>
+      <div class="summary-empty-title">Nothing selected yet</div>
+      <div class="summary-empty-sub">Choose tests from the left panel</div>
+    </div>`;
+    syncHiddenInputs();
+    return;
+  }
+  let html = '<div class="summary-items">';
+  chosenPanels.forEach(p => {
+    const color = catColor(p.category);
+    html += `<div class="sum-row sum-row-panel">
+      <div class="sum-row-left">
+        <span class="sum-dot" style="background:${color}"></span>
+        <span class="sum-row-name"><strong>${esc(p.name)}</strong>
+          <span class="sum-row-count">${(p.tests||[]).length} tests</span></span>
+      </div>
+      <div class="sum-row-right">
+        ${p.price>0?`<span class="sum-row-price">PKR ${money(p.price)}</span>`:''}
+        <button type="button" class="sum-remove" data-remove-panel="${p.id}"><i class="fas fa-times"></i></button>
+      </div>
+    </div>`;
+  });
+  if (chosenTests.length) {
+    html += `<div class="sum-section-lbl">Individual Tests</div>`;
+    chosenTests.forEach(t => {
+      html += `<div class="sum-row">
+        <div class="sum-row-left">
+          <span class="sum-dot sum-dot-solo"></span>
+          <span class="sum-row-name">${esc(t.name)}</span>
+        </div>
+        <div class="sum-row-right">
+          ${t.price>0?`<span class="sum-row-price">PKR ${money(t.price)}</span>`:''}
+          <button type="button" class="sum-remove" data-remove-test="${t.id}"><i class="fas fa-times"></i></button>
+        </div>
+      </div>`;
+    });
+  }
+  html += '</div>';
+  list.innerHTML = html;
+  list.querySelectorAll('[data-remove-panel]').forEach(btn =>
+    btn.addEventListener('click', () => { selPanels.delete(parseInt(btn.dataset.removePanel)); buildAll(); })
+  );
+  list.querySelectorAll('[data-remove-test]').forEach(btn =>
+    btn.addEventListener('click', () => { selTests.delete(parseInt(btn.dataset.removeTest)); buildAll(); })
+  );
+  syncHiddenInputs();
+}
+
+function syncHiddenInputs() {
+  document.getElementById('hiddenInputs')?.remove();
+  const hidden = document.createElement('div');
+  hidden.id = 'hiddenInputs';
+  hidden.innerHTML =
+    [...selPanels].map(id=>`<input type="hidden" name="panel_ids" value="${id}">`).join('')+
+    [...selTests].map(id=>`<input type="hidden" name="test_ids" value="${id}">`).join('');
+  document.getElementById('orderForm').appendChild(hidden);
+}
+
+function buildAll() {
+  buildCategoryTabs(); buildPanelGrid(); buildSoloGrid(); updateSummary();
+  const empty = document.getElementById('panelSection').classList.contains('d-none') &&
+                document.getElementById('soloSection').classList.contains('d-none');
+  document.getElementById('noResults').classList.toggle('d-none', !empty);
+}
+
+// Events
+const searchEl = document.getElementById('testSearch');
+const clearBtn = document.getElementById('clearSearch');
+searchEl.addEventListener('input', function() {
+  search = this.value.toLowerCase().trim();
+  clearBtn.style.display = search ? '' : 'none';
+  buildAll();
+});
+clearBtn.addEventListener('click', () => { searchEl.value=''; search=''; clearBtn.style.display='none'; buildAll(); });
+document.getElementById('clearSearchLink').addEventListener('click', () => { searchEl.value=''; search=''; clearBtn.style.display='none'; buildAll(); });
+
+document.getElementById('patient_id').addEventListener('change', function() {
+  this.classList.remove('is-invalid');
+  document.getElementById('patientError').style.display = 'none';
+});
+
+document.getElementById('orderForm').addEventListener('submit', function(e) {
+  const pat = document.getElementById('patient_id');
+  if (!pat.value) {
+    e.preventDefault();
+    pat.classList.add('is-invalid');
+    document.getElementById('patientError').style.display = 'block';
+    pat.scrollIntoView({behavior:'smooth', block:'center'});
+    return false;
+  }
+  if (!selPanels.size && !selTests.size) {
+    e.preventDefault();
+    const alert = document.getElementById('noSelAlert');
+    alert.classList.remove('d-none');
+    setTimeout(() => alert.classList.add('d-none'), 4000);
+    return false;
+  }
+  document.getElementById('submitBtn').innerHTML = '<span class="spinner me-2"></span>Placing Order…';
+  document.getElementById('submitBtn').disabled = true;
+});
+
+buildAll();
+
+if (!PANELS.length && !SOLO_TESTS.length) {
+  document.getElementById('noResults').classList.remove('d-none');
+  document.getElementById('noResults').innerHTML = `
+    <i class="fas fa-vials no-results-icon"></i>
+    <div class="no-results-title">No Tests in Catalog Yet</div>
+    <div class="no-results-sub">Please add tests in the <a href="/tests" class="link-gold">Tests</a> section first.</div>`;
+}
+
+})();
+</script>
+
+{% endif %}{# end view switch #}
+
 {% endblock %}

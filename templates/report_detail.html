@@ -46,7 +46,9 @@
 
             <!-- Test Results -->
             <h5 class="text-primary mb-3">Test Results</h5>
-            <div class="table-responsive">
+            {% for group in group_order_items(order) %}
+            <h6 class="fw-bold text-secondary mb-2">{{ group.label }}</h6>
+            <div class="table-responsive mb-4">
                 <table class="table table-bordered">
                     <thead class="table-primary">
                         <tr>
@@ -58,7 +60,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in order.items %}
+                        {% for item in group['items'] %}
                         <tr>
                             <td><strong>{{ item.test.name }}</strong></td>
                             <td>
@@ -76,6 +78,7 @@
                     </tbody>
                 </table>
             </div>
+            {% endfor %}
 
             <!-- Footer -->
             <div class="text-center mt-5 pt-4 border-top">

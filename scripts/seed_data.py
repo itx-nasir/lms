@@ -13,7 +13,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from database import create_tables, SessionLocal
 import crud
-from models import TestCategory, Test
+from models import TestCategory, Test, Panel, PanelTest
 
 load_dotenv()
 
@@ -1670,17 +1670,31 @@ def get_or_create_category(db, category_name):
         print(f"Found existing category: {category_name}")
     return category
 
-def create_test(db, category_id, test_name, parameter, normal_range, price=0.0):
-    full_test_name = f"{test_name} - {parameter}"
-    existing = db.query(Test).filter(
-        Test.name == full_test_name,
-        Test.category_id == category_id
-    ).first()
+def get_or_create_panel(db, panel_name):
+    panel = db.query(Panel).filter(Panel.name == panel_name).first()
+    if not panel:
+        panel = Panel(name=panel_name, price=0.0)
+        db.add(panel)
+        db.commit()
+        db.refresh(panel)
+        print(f"Created new panel: {panel_name}")
+    return panel
+
+def create_test_in_panel(db, category_id, panel_id, parameter, normal_range, price=0.0):
+    """Create the parameter as a Test and link it to its Panel, unless it
+    already exists (idempotent so the script can be re-run safely)."""
+    existing = (
+        db.query(Test)
+        .join(PanelTest, PanelTest.test_id == Test.id)
+        .filter(PanelTest.panel_id == panel_id, Test.name == parameter)
+        .first()
+    )
     if existing:
-        print(f"Test already exists: {full_test_name}")
+        print(f"Test already exists: {parameter} (panel #{panel_id})")
         return existing
+
     new_test = Test(
-        name=full_test_name,
+        name=parameter,
         price=price,
         reference_range=normal_range,
         category_id=category_id
@@ -1688,7 +1702,12 @@ def create_test(db, category_id, test_name, parameter, normal_range, price=0.0):
     db.add(new_test)
     db.commit()
     db.refresh(new_test)
-    print(f"Created new test: {full_test_name}")
+
+    sequence = db.query(PanelTest).filter(PanelTest.panel_id == panel_id).count()
+    db.add(PanelTest(panel_id=panel_id, test_id=new_test.id, sequence=sequence))
+    db.commit()
+
+    print(f"Created new test: {parameter} (panel #{panel_id})")
     return new_test
 
 # ============================================================
@@ -1701,20 +1720,45 @@ def seed_tests():
         print("SEEDING TEST DATA")
         print("=" * 80)
 
-        # Group data by category to create categories first
+        # Create categories first
         categories = set(item["category"] for item in ALL_TEST_DATA)
         category_map = {}
         for cat_name in categories:
             cat = get_or_create_category(db, cat_name)
             category_map[cat_name] = cat.id
 
-        # Insert each test
+        # Some generic group names (e.g. "Physical Examination", "Chemical
+        # Examination", "Inflammatory Markers") are reused across different
+        # categories (Stool vs Urinalysis, Biochemistry vs Stool, etc). Each
+        # occurrence must become its OWN panel, so disambiguate the display
+        # name with the category whenever a (category, test_name) pair isn't
+        # unique on its own.
+        group_categories = {}
+        for item in ALL_TEST_DATA:
+            group_categories.setdefault(item["test_name"], set()).add(item["category"])
+
+        # Create panels keyed by (category, test_name) so same-named groups
+        # in different categories never collide.
+        panel_map = {}  # (category, test_name) -> panel_id
+        for item in ALL_TEST_DATA:
+            key = (item["category"], item["test_name"])
+            if key in panel_map:
+                continue
+            if len(group_categories[item["test_name"]]) > 1:
+                display_name = f"{item['test_name']} ({item['category'].split('/')[0].split(' ')[0]})"
+            else:
+                display_name = item["test_name"]
+            panel = get_or_create_panel(db, display_name)
+            panel_map[key] = panel.id
+
+        # Insert each test parameter, linked to its panel
         for idx, data in enumerate(ALL_TEST_DATA, 1):
             cat_id = category_map[data["category"]]
-            create_test(
+            panel_id = panel_map[(data["category"], data["test_name"])]
+            create_test_in_panel(
                 db=db,
                 category_id=cat_id,
-                test_name=data["test_name"],
+                panel_id=panel_id,
                 parameter=data["parameter"],
                 normal_range=data["normal_range"],
                 price=0.0
@@ -1741,20 +1785,12 @@ def list_inserted_data():
         print("VERIFICATION OF INSERTED DATA")
         print("=" * 80)
 
-        categories = db.query(TestCategory).all()
-        for cat in categories:
-            tests = db.query(Test).filter(Test.category_id == cat.id).all()
-            print(f"\n📂 {cat.name} ({len(tests)} tests)")
-            # Group by test_name for readability
-            groups = {}
-            for t in tests:
-                test_type = t.name.split(" - ")[0]
-                groups.setdefault(test_type, []).append(t)
-            for group, items in groups.items():
-                print(f"  └── {group}")
-                for item in items:
-                    param = item.name.split(" - ", 1)[1] if " - " in item.name else item.name
-                    print(f"       • {param}: {item.reference_range}")
+        panels = db.query(Panel).order_by(Panel.name).all()
+        for panel in panels:
+            tests = panel.tests
+            print(f"\n[Panel] {panel.name} ({len(tests)} tests)")
+            for item in tests:
+                print(f"       - {item.name}: {item.reference_range}")
     except Exception as e:
         print(f"Verification error: {e}")
     finally:
@@ -1780,7 +1816,7 @@ def main():
     # Show summary
     list_inserted_data()
 
-    print("\n✅ Seeding completed successfully!")
+    print("\nSeeding completed successfully!")
 
 if __name__ == "__main__":
     main()
