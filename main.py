@@ -25,11 +25,13 @@ app = FastAPI(
     redoc_url=None
 )
 
-# Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+import sys
 
-# Templates
-templates = Jinja2Templates(directory="templates")
+BASE_DIR = sys._MEIPASS if getattr(sys, 'frozen', False) else os.path.dirname(os.path.abspath(__file__))
+
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
+
 templates.env.globals["group_order_items"] = crud.group_order_items
 templates.env.filters["tojson"] = lambda value: Markup(json.dumps(value))
 
