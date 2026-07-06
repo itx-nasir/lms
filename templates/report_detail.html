@@ -12,6 +12,9 @@
         <button onclick="document.title='RPT-{{ order.id }} - {{ order.patient.name }}'; window.print();" class="btn btn-primary btn-sm">
             <i class="fas fa-download me-1"></i>Download PDF
         </button>
+        <button onclick="sendWhatsApp()" class="btn btn-success btn-sm">
+            <i class="fab fa-whatsapp me-1"></i>Send via WhatsApp
+        </button>
         <a href="/reports" class="btn btn-secondary btn-sm">
             <i class="fas fa-arrow-left me-1"></i>Back
         </a>
@@ -109,4 +112,22 @@
         </div><!-- /report-card -->
     </div><!-- /report-wrapper -->
 </div>
+
+<script>
+function sendWhatsApp() {
+    var raw = "{{ order.patient.phone }}".replace(/\D/g, '');
+    // Convert local Pakistani format 03xx to international 923xx
+    if (raw.startsWith('0')) raw = '92' + raw.slice(1);
+    var phone = prompt("Confirm WhatsApp number (international format):", raw);
+    if (!phone) return;
+    phone = phone.replace(/\D/g, '');
+    var message =
+        "🧪 *Lab Report - RPT-{{ order.id }}*\n" +
+        "Patient: {{ order.patient.name }}\n" +
+        "Date: {{ order.ordered_at.strftime('%B %d, %Y') }}\n\n" +
+        "Your lab report is ready. Please visit the lab to collect a printed copy or contact us for details.\n\n" +
+        "Rehman Medical & Surgical Hospital\n📞 0334-8686184";
+    window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(message), "whatsapp_web");
+}
+</script>
 {% endblock %}

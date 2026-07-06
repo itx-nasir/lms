@@ -1,0 +1,2138 @@
+[
+  {
+    "category": "Biochemistry",
+    "test_name": "Liver Function Tests",
+    "parameter": "ALT (SGPT)",
+    "range": "7-56",
+    "unit": "U/L",
+    "original_reference": "M: 7-56 U/L; F: 7-40 U/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Liver Function Tests",
+    "parameter": "AST (SGOT)",
+    "range": "10-40",
+    "unit": "U/L",
+    "original_reference": "M: 10-40 U/L; F: 9-32 U/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Liver Function Tests",
+    "parameter": "ALP (Alkaline Phosphatase)",
+    "range": "44-147",
+    "unit": "U/L",
+    "original_reference": "Adults: 44-147 U/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Liver Function Tests",
+    "parameter": "GGT (Gamma GT)",
+    "range": "11-50",
+    "unit": "U/L",
+    "original_reference": "M: 11-50 U/L; F: 7-32 U/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Liver Function Tests",
+    "parameter": "Total Bilirubin",
+    "range": "0.2-1.2",
+    "unit": "mg/dL",
+    "original_reference": "0.2-1.2 mg/dL (3.4-20.5 µmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Liver Function Tests",
+    "parameter": "Direct Bilirubin",
+    "range": "0.0-0.3",
+    "unit": "mg/dL",
+    "original_reference": "0.0-0.3 mg/dL (0-5.1 µmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Liver Function Tests",
+    "parameter": "Indirect Bilirubin",
+    "range": "0.2-0.8",
+    "unit": "mg/dL",
+    "original_reference": "0.2-0.8 mg/dL (3.4-13.7 µmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Liver Function Tests",
+    "parameter": "Total Protein",
+    "range": "6.0-8.3",
+    "unit": "g/dL",
+    "original_reference": "6.0-8.3 g/dL (60-83 g/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Liver Function Tests",
+    "parameter": "Albumin",
+    "range": "3.5-5.0",
+    "unit": "g/dL",
+    "original_reference": "3.5-5.0 g/dL (35-50 g/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Liver Function Tests",
+    "parameter": "Globulin",
+    "range": "2.3-3.5",
+    "unit": "g/dL",
+    "original_reference": "2.3-3.5 g/dL (23-35 g/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Liver Function Tests",
+    "parameter": "A/G Ratio",
+    "range": "1.1-2.5",
+    "unit": "",
+    "original_reference": "1.1-2.5"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Kidney Function Tests",
+    "parameter": "Urea",
+    "range": "15-45",
+    "unit": "mg/dL",
+    "original_reference": "15-45 mg/dL (2.5-7.5 mmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Kidney Function Tests",
+    "parameter": "Creatinine",
+    "range": "0.7-1.3",
+    "unit": "mg/dL",
+    "original_reference": "M: 0.7-1.3 mg/dL; F: 0.6-1.1 mg/dL"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Kidney Function Tests",
+    "parameter": "BUN",
+    "range": "7-20",
+    "unit": "mg/dL",
+    "original_reference": "7-20 mg/dL (2.5-7.1 mmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Kidney Function Tests",
+    "parameter": "eGFR",
+    "range": ">90",
+    "unit": "mL/min/",
+    "original_reference": ">90 mL/min/1.73m²"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Kidney Function Tests",
+    "parameter": "Uric Acid",
+    "range": "3.4-7.0",
+    "unit": "mg/dL",
+    "original_reference": "M: 3.4-7.0 mg/dL; F: 2.4-6.0 mg/dL"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Lipid Profile",
+    "parameter": "Total Cholesterol",
+    "range": "<200",
+    "unit": "mg/dL",
+    "original_reference": "<200 mg/dL (<5.2 mmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Lipid Profile",
+    "parameter": "HDL Cholesterol",
+    "range": ">40",
+    "unit": "mg/dL",
+    "original_reference": "M: >40 mg/dL; F: >50 mg/dL"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Lipid Profile",
+    "parameter": "LDL Cholesterol",
+    "range": "<100",
+    "unit": "mg/dL",
+    "original_reference": "<100 mg/dL (<2.6 mmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Lipid Profile",
+    "parameter": "VLDL Cholesterol",
+    "range": "5-40",
+    "unit": "mg/dL",
+    "original_reference": "5-40 mg/dL (0.1-1.0 mmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Lipid Profile",
+    "parameter": "Triglycerides",
+    "range": "<150",
+    "unit": "mg/dL",
+    "original_reference": "<150 mg/dL (<1.7 mmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Lipid Profile",
+    "parameter": "Non-HDL Cholesterol",
+    "range": "<130",
+    "unit": "mg/dL",
+    "original_reference": "<130 mg/dL (<3.4 mmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Lipid Profile",
+    "parameter": "TC/HDL Ratio",
+    "range": "<5.0",
+    "unit": "",
+    "original_reference": "<5.0"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Diabetes Panel",
+    "parameter": "Glucose (Fasting)",
+    "range": "70-100",
+    "unit": "mg/dL",
+    "original_reference": "70-100 mg/dL (3.9-5.6 mmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Diabetes Panel",
+    "parameter": "Glucose (Random)",
+    "range": "70-140",
+    "unit": "mg/dL",
+    "original_reference": "70-140 mg/dL (3.9-7.8 mmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Diabetes Panel",
+    "parameter": "HbA1c",
+    "range": "<5.7",
+    "unit": "%",
+    "original_reference": "<5.7% (<39 mmol/mol)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Diabetes Panel",
+    "parameter": "Fructosamine",
+    "range": "205-285",
+    "unit": "µmol/L",
+    "original_reference": "205-285 µmol/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Electrolytes",
+    "parameter": "Sodium",
+    "range": "136-145",
+    "unit": "mmol/L",
+    "original_reference": "136-145 mmol/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Electrolytes",
+    "parameter": "Potassium",
+    "range": "3.5-5.1",
+    "unit": "mmol/L",
+    "original_reference": "3.5-5.1 mmol/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Electrolytes",
+    "parameter": "Chloride",
+    "range": "98-107",
+    "unit": "mmol/L",
+    "original_reference": "98-107 mmol/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Electrolytes",
+    "parameter": "CO2 (Bicarbonate)",
+    "range": "22-29",
+    "unit": "mmol/L",
+    "original_reference": "22-29 mmol/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Electrolytes",
+    "parameter": "Anion Gap",
+    "range": "8-16",
+    "unit": "mmol/L",
+    "original_reference": "8-16 mmol/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Cardiac Markers",
+    "parameter": "CK-Total",
+    "range": "39-308",
+    "unit": "U/L",
+    "original_reference": "M: 39-308 U/L; F: 26-192 U/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Cardiac Markers",
+    "parameter": "CK-MB",
+    "range": "0-6.3",
+    "unit": "ng/mL",
+    "original_reference": "0-6.3 ng/mL"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Cardiac Markers",
+    "parameter": "Troponin I",
+    "range": "<0.04",
+    "unit": "ng/mL",
+    "original_reference": "<0.04 ng/mL"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Cardiac Markers",
+    "parameter": "Troponin T",
+    "range": "<0.01",
+    "unit": "ng/mL",
+    "original_reference": "<0.01 ng/mL"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Cardiac Markers",
+    "parameter": "LDH",
+    "range": "140-280",
+    "unit": "U/L",
+    "original_reference": "140-280 U/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Bone Markers",
+    "parameter": "Calcium (Total)",
+    "range": "8.5-10.5",
+    "unit": "mg/dL",
+    "original_reference": "8.5-10.5 mg/dL (2.1-2.6 mmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Bone Markers",
+    "parameter": "Calcium (Ionized)",
+    "range": "4.65-5.25",
+    "unit": "mg/dL",
+    "original_reference": "4.65-5.25 mg/dL (1.16-1.31 mmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Bone Markers",
+    "parameter": "Phosphorus",
+    "range": "2.5-4.5",
+    "unit": "mg/dL",
+    "original_reference": "2.5-4.5 mg/dL (0.8-1.5 mmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Bone Markers",
+    "parameter": "Magnesium",
+    "range": "1.7-2.2",
+    "unit": "mg/dL",
+    "original_reference": "1.7-2.2 mg/dL (0.7-0.9 mmol/L)"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Iron Studies",
+    "parameter": "Iron",
+    "range": "65-175",
+    "unit": "µg/dL",
+    "original_reference": "M: 65-175 µg/dL; F: 50-170 µg/dL"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Iron Studies",
+    "parameter": "TIBC",
+    "range": "250-450",
+    "unit": "µg/dL",
+    "original_reference": "250-450 µg/dL"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Iron Studies",
+    "parameter": "Transferrin Saturation",
+    "range": "20-50",
+    "unit": "%",
+    "original_reference": "20-50%"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Iron Studies",
+    "parameter": "Ferritin",
+    "range": "12-300",
+    "unit": "ng/mL",
+    "original_reference": "M: 12-300 ng/mL; F: 12-150 ng/mL"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Pancreatic Enzymes",
+    "parameter": "Amylase",
+    "range": "28-100",
+    "unit": "U/L",
+    "original_reference": "28-100 U/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Pancreatic Enzymes",
+    "parameter": "Lipase",
+    "range": "10-140",
+    "unit": "U/L",
+    "original_reference": "10-140 U/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Inflammatory Markers",
+    "parameter": "CRP",
+    "range": "<3.0",
+    "unit": "mg/L",
+    "original_reference": "<3.0 mg/L"
+  },
+  {
+    "category": "Biochemistry",
+    "test_name": "Inflammatory Markers",
+    "parameter": "ESR",
+    "range": "<15",
+    "unit": "mm/hr",
+    "original_reference": "M: <15 mm/hr; F: <20 mm/hr"
+  },
+  {
+    "category": "Haematology & Coagulation",
+    "test_name": "CBC/CP",
+    "parameter": "Haemoglobin",
+    "range": "14-18",
+    "unit": "g/dl",
+    "original_reference": "M:14-18 g/dl; F:11.5-16.5 g/dl"
+  },
+  {
+    "category": "Haematology & Coagulation",
+    "test_name": "CBC/CP",
+    "parameter": "Haematocrit",
+    "range": "40-54",
+    "unit": "%",
+    "original_reference": "M:40-54%; F:37-47%"
+  },
+  {
+    "category": "Haematology & Coagulation",
+    "test_name": "CBC/CP",
+    "parameter": "RBC Count",
+    "range": "4.1-5.9",
+    "unit": "million/cumm",
+    "original_reference": "4.1-5.9 million/cumm"
+  },
+  {
+    "category": "Haematology & Coagulation",
+    "test_name": "CBC/CP",
+    "parameter": "MCV",
+    "range": "80-100",
+    "unit": "fl",
+    "original_reference": "Adults:80-100 fl; Neonates:95-125 fl"
+  },
+  {
+    "category": "Haematology & Coagulation",
+    "test_name": "CBC/CP",
+    "parameter": "MCH",
+    "range": "27-34",
+    "unit": "pg",
+    "original_reference": "Adults:27-34 pg; Neonates:30-42 pg"
+  },
+  {
+    "category": "Haematology & Coagulation",
+    "test_name": "CBC/CP",
+    "parameter": "MCHC",
+    "range": "32-36",
+    "unit": "g/dl",
+    "original_reference": "Adults:32-36 g/dl; Neonates:30-34 g/dl"
+  },
+  {
+    "category": "Haematology & Coagulation",
+    "test_name": "CBC/CP",
+    "parameter": "RDW",
+    "range": "11.0-16.0",
+    "unit": "%",
+    "original_reference": "11.0-16.0%"
+  },
+  {
+    "category": "Haematology & Coagulation",
+    "test_name": "CBC/CP",
+    "parameter": "WBC Count",
+    "range": "4",
+    "unit": "per",
+    "original_reference": "4,000-11,000 per cumm"
+  },
+  {
+    "category": "Haematology & Coagulation",
+    "test_name": "CBC/CP",
+    "parameter": "Neutrophils",
+    "range": "40-75",
+    "unit": "%",
+    "original_reference": "40-75%"
+  },
+  {
+    "category": "Haematology & Coagulation",
+    "test_name": "CBC/CP",
+    "parameter": "Lymphocytes",
+    "range": "20-45",
+    "unit": "%",
+    "original_reference": "20-45%"
+  },
+  {
+    "category": "Haematology & Coagulation",
+    "test_name": "CBC/CP",
+    "parameter": "Eosinophils",
+    "range": "1-4",
+    "unit": "%",
+    "original_reference": "1-4%"
+  },
+  {
+    "category": "Haematology & Coagulation",
+    "test_name": "CBC/CP",
+    "parameter": "Monocytes",
+    "range": "1-6",
+    "unit": "%",
+    "original_reference": "1-6%"
+  },
+  {
+    "category": "Haematology & Coagulation",
+    "test_name": "CBC/CP",
+    "parameter": "Basophils",
+    "range": "0-1",
+    "unit": "%",
+    "original_reference": "0-1%"
+  },
+  {
+    "category": "Haematology & Coagulation",
+    "test_name": "CBC/CP",
+    "parameter": "Platelets",
+    "range": "150",
+    "unit": "per",
+    "original_reference": "150,000-400,000 per cumm"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Hepatitis Panel",
+    "parameter": "HBsAg",
+    "range": "Non-reactive",
+    "unit": "",
+    "original_reference": "Non-reactive"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Hepatitis Panel",
+    "parameter": "Anti-HBs",
+    "range": ">10",
+    "unit": "mIU/mL",
+    "original_reference": "Non-reactive or >10 mIU/mL (immune)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Hepatitis Panel",
+    "parameter": "Anti-HBc Total",
+    "range": "Non-reactive",
+    "unit": "",
+    "original_reference": "Non-reactive"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Hepatitis Panel",
+    "parameter": "Anti-HBc IgM",
+    "range": "Non-reactive",
+    "unit": "",
+    "original_reference": "Non-reactive"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Hepatitis Panel",
+    "parameter": "HBeAg",
+    "range": "Non-reactive",
+    "unit": "",
+    "original_reference": "Non-reactive"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Hepatitis Panel",
+    "parameter": "Anti-HBe",
+    "range": "Non-reactive",
+    "unit": "",
+    "original_reference": "Non-reactive"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Hepatitis Panel",
+    "parameter": "Anti-HCV",
+    "range": "Non-reactive",
+    "unit": "",
+    "original_reference": "Non-reactive"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Hepatitis Panel",
+    "parameter": "Anti-HAV IgM",
+    "range": "Non-reactive",
+    "unit": "",
+    "original_reference": "Non-reactive"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Hepatitis Panel",
+    "parameter": "Anti-HAV IgG",
+    "range": "Non-reactive",
+    "unit": "",
+    "original_reference": "Non-reactive"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Hepatitis Panel",
+    "parameter": "Anti-HEV IgM",
+    "range": "Non-reactive",
+    "unit": "",
+    "original_reference": "Non-reactive"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "HIV Testing",
+    "parameter": "HIV 1 & 2 Ab",
+    "range": "Non-reactive",
+    "unit": "",
+    "original_reference": "Non-reactive"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "HIV Testing",
+    "parameter": "HIV Ag/Ab Combo",
+    "range": "Non-reactive",
+    "unit": "",
+    "original_reference": "Non-reactive"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "HIV Testing",
+    "parameter": "HIV-1 RNA (Viral Load)",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "HIV Testing",
+    "parameter": "CD4+ Count",
+    "range": "500-1600",
+    "unit": "cells/µL",
+    "original_reference": "500-1600 cells/µL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "HIV Testing",
+    "parameter": "CD4/CD8 Ratio",
+    "range": "1.0-4.0",
+    "unit": "",
+    "original_reference": "1.0-4.0"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "TORCH Panel",
+    "parameter": "Toxoplasma IgG",
+    "range": "<1.6",
+    "unit": "IU/mL",
+    "original_reference": "<1.6 IU/mL (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "TORCH Panel",
+    "parameter": "Toxoplasma IgM",
+    "range": "<0.55",
+    "unit": "negative",
+    "original_reference": "<0.55 (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "TORCH Panel",
+    "parameter": "Rubella IgG",
+    "range": "<10",
+    "unit": "IU/mL",
+    "original_reference": "<10 IU/mL (non-immune); >15 IU/mL (immune)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "TORCH Panel",
+    "parameter": "Rubella IgM",
+    "range": "<0.9",
+    "unit": "negative",
+    "original_reference": "<0.9 (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "TORCH Panel",
+    "parameter": "CMV IgG",
+    "range": "<6.0",
+    "unit": "AU/mL",
+    "original_reference": "<6.0 AU/mL (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "TORCH Panel",
+    "parameter": "CMV IgM",
+    "range": "<0.85",
+    "unit": "negative",
+    "original_reference": "<0.85 (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "TORCH Panel",
+    "parameter": "HSV-1 IgG",
+    "range": "<0.9",
+    "unit": "negative",
+    "original_reference": "<0.9 (negative); >1.1 (positive)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "TORCH Panel",
+    "parameter": "HSV-2 IgG",
+    "range": "<0.9",
+    "unit": "negative",
+    "original_reference": "<0.9 (negative); >1.1 (positive)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "TORCH Panel",
+    "parameter": "HSV-1/2 IgM",
+    "range": "<0.9",
+    "unit": "negative",
+    "original_reference": "<0.9 (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Autoimmune Markers",
+    "parameter": "ANA (Antinuclear Antibody)",
+    "range": "<1",
+    "unit": "",
+    "original_reference": "Negative (<1:80)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Autoimmune Markers",
+    "parameter": "Anti-dsDNA",
+    "range": "<25",
+    "unit": "IU/mL",
+    "original_reference": "<25 IU/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Autoimmune Markers",
+    "parameter": "Anti-Sm",
+    "range": "<20",
+    "unit": "U/mL",
+    "original_reference": "<20 U/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Autoimmune Markers",
+    "parameter": "Anti-SSA/Ro52",
+    "range": "<20",
+    "unit": "U/mL",
+    "original_reference": "<20 U/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Autoimmune Markers",
+    "parameter": "Anti-SSB/La",
+    "range": "<20",
+    "unit": "U/mL",
+    "original_reference": "<20 U/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Autoimmune Markers",
+    "parameter": "Anti-Scl-70",
+    "range": "<20",
+    "unit": "U/mL",
+    "original_reference": "<20 U/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Autoimmune Markers",
+    "parameter": "Anti-Jo-1",
+    "range": "<20",
+    "unit": "U/mL",
+    "original_reference": "<20 U/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Autoimmune Markers",
+    "parameter": "Anti-Centromere",
+    "range": "<20",
+    "unit": "U/mL",
+    "original_reference": "<20 U/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Autoimmune Markers",
+    "parameter": "Anti-CCP",
+    "range": "<20",
+    "unit": "U/mL",
+    "original_reference": "<20 U/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Autoimmune Markers",
+    "parameter": "Rheumatoid Factor (RF)",
+    "range": "<15",
+    "unit": "IU/mL",
+    "original_reference": "<15 IU/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Thyroid Antibodies",
+    "parameter": "Anti-TPO",
+    "range": "<35",
+    "unit": "IU/mL",
+    "original_reference": "<35 IU/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Thyroid Antibodies",
+    "parameter": "Anti-Thyroglobulin",
+    "range": "<40",
+    "unit": "IU/mL",
+    "original_reference": "<40 IU/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Thyroid Antibodies",
+    "parameter": "TSI (TSH Receptor Ab)",
+    "range": "<1.75",
+    "unit": "IU/L",
+    "original_reference": "<1.75 IU/L"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Celiac Disease",
+    "parameter": "Anti-tTG IgA",
+    "range": "<10",
+    "unit": "U/mL",
+    "original_reference": "<10 U/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Celiac Disease",
+    "parameter": "Anti-tTG IgG",
+    "range": "<10",
+    "unit": "U/mL",
+    "original_reference": "<10 U/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Celiac Disease",
+    "parameter": "Anti-Endomysial IgA",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Celiac Disease",
+    "parameter": "Anti-Gliadin IgG",
+    "range": "<25",
+    "unit": "U/mL",
+    "original_reference": "<25 U/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Celiac Disease",
+    "parameter": "Total IgA",
+    "range": "70-400",
+    "unit": "mg/dL",
+    "original_reference": "70-400 mg/dL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Immunoglobulins",
+    "parameter": "IgG",
+    "range": "700-1600",
+    "unit": "mg/dL",
+    "original_reference": "700-1600 mg/dL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Immunoglobulins",
+    "parameter": "IgA",
+    "range": "70-400",
+    "unit": "mg/dL",
+    "original_reference": "70-400 mg/dL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Immunoglobulins",
+    "parameter": "IgM",
+    "range": "40-230",
+    "unit": "mg/dL",
+    "original_reference": "40-230 mg/dL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Immunoglobulins",
+    "parameter": "IgE Total",
+    "range": "<100",
+    "unit": "IU/mL",
+    "original_reference": "<100 IU/mL (adults)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Complement System",
+    "parameter": "C3",
+    "range": "90-180",
+    "unit": "mg/dL",
+    "original_reference": "90-180 mg/dL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Complement System",
+    "parameter": "C4",
+    "range": "10-40",
+    "unit": "mg/dL",
+    "original_reference": "10-40 mg/dL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Complement System",
+    "parameter": "CH50",
+    "range": "60-144",
+    "unit": "CAE",
+    "original_reference": "60-144 CAE units"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Bacterial Serology",
+    "parameter": "ASO (Anti-Streptolysin O)",
+    "range": "<200",
+    "unit": "IU/mL",
+    "original_reference": "<200 IU/mL"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Bacterial Serology",
+    "parameter": "H. pylori IgG",
+    "range": "<0.75",
+    "unit": "negative",
+    "original_reference": "<0.75 (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Bacterial Serology",
+    "parameter": "Brucella Ab",
+    "range": "<1",
+    "unit": "negative",
+    "original_reference": "<1:80 (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Bacterial Serology",
+    "parameter": "Salmonella Typhi O",
+    "range": "<1",
+    "unit": "negative",
+    "original_reference": "<1:80 (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Bacterial Serology",
+    "parameter": "Salmonella Typhi H",
+    "range": "<1",
+    "unit": "negative",
+    "original_reference": "<1:80 (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Bacterial Serology",
+    "parameter": "Salmonella Paratyphi A",
+    "range": "<1",
+    "unit": "negative",
+    "original_reference": "<1:80 (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Bacterial Serology",
+    "parameter": "Salmonella Paratyphi B",
+    "range": "<1",
+    "unit": "negative",
+    "original_reference": "<1:80 (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Syphilis Testing",
+    "parameter": "VDRL",
+    "range": "Non-reactive",
+    "unit": "",
+    "original_reference": "Non-reactive"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Syphilis Testing",
+    "parameter": "TPHA",
+    "range": "Non-reactive",
+    "unit": "",
+    "original_reference": "Non-reactive"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Syphilis Testing",
+    "parameter": "FTA-ABS",
+    "range": "Non-reactive",
+    "unit": "",
+    "original_reference": "Non-reactive"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Dengue Serology",
+    "parameter": "Dengue NS1 Antigen",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Dengue Serology",
+    "parameter": "Dengue IgM",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Dengue Serology",
+    "parameter": "Dengue IgG",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Other Viral Serology",
+    "parameter": "EBV VCA IgM",
+    "range": "<0.8",
+    "unit": "negative",
+    "original_reference": "<0.8 (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Other Viral Serology",
+    "parameter": "EBV VCA IgG",
+    "range": "<0.8",
+    "unit": "negative",
+    "original_reference": "<0.8 (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Other Viral Serology",
+    "parameter": "EBV EBNA IgG",
+    "range": "<0.8",
+    "unit": "negative",
+    "original_reference": "<0.8 (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Other Viral Serology",
+    "parameter": "Varicella Zoster IgG",
+    "range": "<0.9",
+    "unit": "negative",
+    "original_reference": "<0.9 (negative); >1.1 (immune)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "Other Viral Serology",
+    "parameter": "Varicella Zoster IgM",
+    "range": "<0.9",
+    "unit": "negative",
+    "original_reference": "<0.9 (negative)"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "COVID-19 Serology",
+    "parameter": "SARS-CoV-2 IgM",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "COVID-19 Serology",
+    "parameter": "SARS-CoV-2 IgG",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Immunology / Serology",
+    "test_name": "COVID-19 Serology",
+    "parameter": "SARS-CoV-2 Total Ab",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Blood Culture",
+    "parameter": "Aerobic Culture",
+    "range": "5",
+    "unit": "days",
+    "original_reference": "No growth after 5 days"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Blood Culture",
+    "parameter": "Anaerobic Culture",
+    "range": "5",
+    "unit": "days",
+    "original_reference": "No growth after 5 days"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Blood Culture",
+    "parameter": "Organism Identification",
+    "range": "No organisms isolated",
+    "unit": "",
+    "original_reference": "No organisms isolated"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Blood Culture",
+    "parameter": "Antibiotic Sensitivity",
+    "range": "N/A (no growth)",
+    "unit": "",
+    "original_reference": "N/A (no growth)"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Urine Culture",
+    "parameter": "Colony Count",
+    "range": "<10",
+    "unit": "CFU/mL",
+    "original_reference": "<10,000 CFU/mL"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Urine Culture",
+    "parameter": "Organism Identification",
+    "range": "Normal flora or no significant growth",
+    "unit": "",
+    "original_reference": "Normal flora or no significant growth"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Urine Culture",
+    "parameter": "Antibiotic Sensitivity",
+    "range": "N/A (no significant growth)",
+    "unit": "",
+    "original_reference": "N/A (no significant growth)"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Sputum Culture",
+    "parameter": "General Bacteria",
+    "range": "Normal respiratory flora",
+    "unit": "",
+    "original_reference": "Normal respiratory flora"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Sputum Culture",
+    "parameter": "AFB (Acid Fast Bacilli)",
+    "range": "No AFB seen",
+    "unit": "",
+    "original_reference": "No AFB seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Sputum Culture",
+    "parameter": "TB Culture",
+    "range": "No growth of Mycobacterium",
+    "unit": "",
+    "original_reference": "No growth of Mycobacterium"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Sputum Culture",
+    "parameter": "Fungal Culture",
+    "range": "No pathogenic fungi isolated",
+    "unit": "",
+    "original_reference": "No pathogenic fungi isolated"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Stool Culture",
+    "parameter": "Salmonella",
+    "range": "Not isolated",
+    "unit": "",
+    "original_reference": "Not isolated"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Stool Culture",
+    "parameter": "Shigella",
+    "range": "Not isolated",
+    "unit": "",
+    "original_reference": "Not isolated"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Stool Culture",
+    "parameter": "Campylobacter",
+    "range": "Not isolated",
+    "unit": "",
+    "original_reference": "Not isolated"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Stool Culture",
+    "parameter": "E. coli O157:H7",
+    "range": "Not isolated",
+    "unit": "",
+    "original_reference": "Not isolated"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Stool Culture",
+    "parameter": "Vibrio cholerae",
+    "range": "Not isolated",
+    "unit": "",
+    "original_reference": "Not isolated"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Wound/Pus Culture",
+    "parameter": "Aerobic Culture",
+    "range": "No growth or normal skin flora",
+    "unit": "",
+    "original_reference": "No growth or normal skin flora"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Wound/Pus Culture",
+    "parameter": "Anaerobic Culture",
+    "range": "No growth",
+    "unit": "",
+    "original_reference": "No growth"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Wound/Pus Culture",
+    "parameter": "MRSA Screening",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Wound/Pus Culture",
+    "parameter": "Antibiotic Sensitivity",
+    "range": "N/A (no significant growth)",
+    "unit": "",
+    "original_reference": "N/A (no significant growth)"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Throat Culture",
+    "parameter": "Group A Streptococcus",
+    "range": "Not isolated",
+    "unit": "",
+    "original_reference": "Not isolated"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Throat Culture",
+    "parameter": "Group B Streptococcus",
+    "range": "Not isolated",
+    "unit": "",
+    "original_reference": "Not isolated"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Throat Culture",
+    "parameter": "General Bacteria",
+    "range": "Normal throat flora",
+    "unit": "",
+    "original_reference": "Normal throat flora"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Throat Culture",
+    "parameter": "Candida Species",
+    "range": "Not isolated or minimal growth",
+    "unit": "",
+    "original_reference": "Not isolated or minimal growth"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Genital/Vaginal Culture",
+    "parameter": "Neisseria gonorrhoeae",
+    "range": "Not isolated",
+    "unit": "",
+    "original_reference": "Not isolated"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Genital/Vaginal Culture",
+    "parameter": "Group B Streptococcus",
+    "range": "Not isolated",
+    "unit": "",
+    "original_reference": "Not isolated"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Genital/Vaginal Culture",
+    "parameter": "Candida Species",
+    "range": "Not isolated or minimal growth",
+    "unit": "",
+    "original_reference": "Not isolated or minimal growth"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Genital/Vaginal Culture",
+    "parameter": "Trichomonas vaginalis",
+    "range": "Not seen",
+    "unit": "",
+    "original_reference": "Not seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Genital/Vaginal Culture",
+    "parameter": "Bacterial Vaginosis",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "CSF Analysis",
+    "parameter": "Bacterial Culture",
+    "range": "No growth",
+    "unit": "",
+    "original_reference": "No growth"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "CSF Analysis",
+    "parameter": "Fungal Culture",
+    "range": "No growth",
+    "unit": "",
+    "original_reference": "No growth"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "CSF Analysis",
+    "parameter": "AFB Culture",
+    "range": "No growth",
+    "unit": "",
+    "original_reference": "No growth"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "CSF Analysis",
+    "parameter": "Gram Stain",
+    "range": "No organisms seen",
+    "unit": "",
+    "original_reference": "No organisms seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "CSF Analysis",
+    "parameter": "India Ink Preparation",
+    "range": "No Cryptococcus seen",
+    "unit": "",
+    "original_reference": "No Cryptococcus seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Stool",
+    "parameter": "Ova and Parasites",
+    "range": "No ova or parasites seen",
+    "unit": "",
+    "original_reference": "No ova or parasites seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Stool",
+    "parameter": "Giardia lamblia",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Stool",
+    "parameter": "Entamoeba histolytica",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Stool",
+    "parameter": "Cryptosporidium",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Stool",
+    "parameter": "Cyclospora",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Stool",
+    "parameter": "Ascaris lumbricoides",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Stool",
+    "parameter": "Hookworm",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Stool",
+    "parameter": "Trichuris trichiura",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Stool",
+    "parameter": "Strongyloides",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Blood",
+    "parameter": "Malaria Parasite (Thick Film)",
+    "range": "No malaria parasites seen",
+    "unit": "",
+    "original_reference": "No malaria parasites seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Blood",
+    "parameter": "Malaria Parasite (Thin Film)",
+    "range": "No malaria parasites seen",
+    "unit": "",
+    "original_reference": "No malaria parasites seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Blood",
+    "parameter": "P. falciparum Antigen",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Blood",
+    "parameter": "P. vivax Antigen",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Blood",
+    "parameter": "Microfilaria",
+    "range": "Not seen",
+    "unit": "",
+    "original_reference": "Not seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Parasitology - Blood",
+    "parameter": "Trypanosoma",
+    "range": "Not seen",
+    "unit": "",
+    "original_reference": "Not seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Mycology",
+    "parameter": "KOH Preparation",
+    "range": "No fungal elements seen",
+    "unit": "",
+    "original_reference": "No fungal elements seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Mycology",
+    "parameter": "Fungal Culture (Skin/Hair/Nail)",
+    "range": "No pathogenic fungi isolated",
+    "unit": "",
+    "original_reference": "No pathogenic fungi isolated"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Mycology",
+    "parameter": "Candida Culture",
+    "range": "Not isolated or minimal growth",
+    "unit": "",
+    "original_reference": "Not isolated or minimal growth"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Mycology",
+    "parameter": "Aspergillus Culture",
+    "range": "Not isolated",
+    "unit": "",
+    "original_reference": "Not isolated"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Mycology",
+    "parameter": "Cryptococcus Antigen",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "TB/AFB Testing",
+    "parameter": "AFB Smear (Sputum)",
+    "range": "No AFB seen",
+    "unit": "",
+    "original_reference": "No AFB seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "TB/AFB Testing",
+    "parameter": "TB Culture",
+    "range": "No growth of Mycobacterium",
+    "unit": "",
+    "original_reference": "No growth of Mycobacterium"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "TB/AFB Testing",
+    "parameter": "TB PCR/GeneXpert",
+    "range": "MTB not detected",
+    "unit": "",
+    "original_reference": "MTB not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "TB/AFB Testing",
+    "parameter": "Drug Susceptibility",
+    "range": "N/A (no TB growth)",
+    "unit": "",
+    "original_reference": "N/A (no TB growth)"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Antigen Detection",
+    "parameter": "Strep A Rapid Test",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Antigen Detection",
+    "parameter": "Legionella Antigen (Urine)",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Antigen Detection",
+    "parameter": "Pneumococcal Antigen (Urine)",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Antigen Detection",
+    "parameter": "Rotavirus Antigen",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Antigen Detection",
+    "parameter": "Adenovirus Antigen",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Antigen Detection",
+    "parameter": "Norovirus Antigen",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "PCR/Molecular Testing",
+    "parameter": "Chlamydia PCR",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "PCR/Molecular Testing",
+    "parameter": "Gonorrhea PCR",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "PCR/Molecular Testing",
+    "parameter": "HSV-1/2 PCR",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "PCR/Molecular Testing",
+    "parameter": "CMV PCR",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "PCR/Molecular Testing",
+    "parameter": "EBV PCR",
+    "range": "Not detected",
+    "unit": "",
+    "original_reference": "Not detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "PCR/Molecular Testing",
+    "parameter": "Respiratory Panel PCR",
+    "range": "No pathogens detected",
+    "unit": "",
+    "original_reference": "No pathogens detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "PCR/Molecular Testing",
+    "parameter": "GI Panel PCR",
+    "range": "No pathogens detected",
+    "unit": "",
+    "original_reference": "No pathogens detected"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Special Stains",
+    "parameter": "Gram Stain",
+    "range": "No organisms seen",
+    "unit": "",
+    "original_reference": "No organisms seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Special Stains",
+    "parameter": "AFB Stain",
+    "range": "No AFB seen",
+    "unit": "",
+    "original_reference": "No AFB seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Special Stains",
+    "parameter": "PAS Stain (Fungal)",
+    "range": "No fungal elements seen",
+    "unit": "",
+    "original_reference": "No fungal elements seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Special Stains",
+    "parameter": "Silver Stain",
+    "range": "No organisms seen",
+    "unit": "",
+    "original_reference": "No organisms seen"
+  },
+  {
+    "category": "Microbiology / Parasitology",
+    "test_name": "Special Stains",
+    "parameter": "Calcofluor White",
+    "range": "No fungal elements seen",
+    "unit": "",
+    "original_reference": "No fungal elements seen"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Physical Examination",
+    "parameter": "Color",
+    "range": "Brown",
+    "unit": "",
+    "original_reference": "Brown"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Physical Examination",
+    "parameter": "Consistency",
+    "range": "Formed/Semi-formed",
+    "unit": "",
+    "original_reference": "Formed/Semi-formed"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Physical Examination",
+    "parameter": "Odor",
+    "range": "Characteristic/Not offensive",
+    "unit": "",
+    "original_reference": "Characteristic/Not offensive"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Physical Examination",
+    "parameter": "Mucus",
+    "range": "Absent",
+    "unit": "",
+    "original_reference": "Absent"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Physical Examination",
+    "parameter": "Blood",
+    "range": "Absent",
+    "unit": "",
+    "original_reference": "Absent"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Chemical Examination",
+    "parameter": "pH",
+    "range": "6.0-8.0",
+    "unit": "",
+    "original_reference": "6.0-8.0"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Chemical Examination",
+    "parameter": "Occult Blood",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Chemical Examination",
+    "parameter": "Reducing Substances",
+    "range": "<0.25",
+    "unit": "%",
+    "original_reference": "Negative (<0.25%)"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Chemical Examination",
+    "parameter": "Fat Globules",
+    "range": "Absent or few",
+    "unit": "",
+    "original_reference": "Absent or few"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Microscopic Examination",
+    "parameter": "RBC",
+    "range": "Absent",
+    "unit": "",
+    "original_reference": "Absent"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Microscopic Examination",
+    "parameter": "WBC",
+    "range": "0-2",
+    "unit": "per",
+    "original_reference": "0-2 per hpf"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Microscopic Examination",
+    "parameter": "Epithelial Cells",
+    "range": "Few",
+    "unit": "",
+    "original_reference": "Few"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Microscopic Examination",
+    "parameter": "Bacteria",
+    "range": "Normal flora present",
+    "unit": "",
+    "original_reference": "Normal flora present"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Microscopic Examination",
+    "parameter": "Yeast",
+    "range": "Absent or few",
+    "unit": "",
+    "original_reference": "Absent or few"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Microscopic Examination",
+    "parameter": "Parasites",
+    "range": "None seen",
+    "unit": "",
+    "original_reference": "None seen"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Microscopic Examination",
+    "parameter": "Ova",
+    "range": "None seen",
+    "unit": "",
+    "original_reference": "None seen"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Microscopic Examination",
+    "parameter": "Cysts",
+    "range": "None seen",
+    "unit": "",
+    "original_reference": "None seen"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Parasitology",
+    "parameter": "Giardia Antigen",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Parasitology",
+    "parameter": "Cryptosporidium Antigen",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Parasitology",
+    "parameter": "E. histolytica Antigen",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Bacteriology",
+    "parameter": "Salmonella",
+    "range": "Not isolated",
+    "unit": "",
+    "original_reference": "Not isolated"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Bacteriology",
+    "parameter": "Shigella",
+    "range": "Not isolated",
+    "unit": "",
+    "original_reference": "Not isolated"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Bacteriology",
+    "parameter": "Campylobacter",
+    "range": "Not isolated",
+    "unit": "",
+    "original_reference": "Not isolated"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Bacteriology",
+    "parameter": "E. coli O157:H7",
+    "range": "Not isolated",
+    "unit": "",
+    "original_reference": "Not isolated"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Bacteriology",
+    "parameter": "C. difficile Toxin A/B",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Inflammatory Markers",
+    "parameter": "Fecal Calprotectin",
+    "range": "<50",
+    "unit": "µg/g",
+    "original_reference": "<50 µg/g (adults); <150 µg/g (children)"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Inflammatory Markers",
+    "parameter": "Fecal Lactoferrin",
+    "range": "<7.25",
+    "unit": "µg/mL",
+    "original_reference": "<7.25 µg/mL"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Fat Analysis",
+    "parameter": "Fecal Fat (Qualitative)",
+    "range": "Negative for excess fat",
+    "unit": "",
+    "original_reference": "Negative for excess fat"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Fat Analysis",
+    "parameter": "Fecal Fat (72-hour)",
+    "range": "<7",
+    "unit": "g/",
+    "original_reference": "<7 g/24 hours"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Fat Analysis",
+    "parameter": "Coefficient of Fat Absorption",
+    "range": ">93",
+    "unit": "%",
+    "original_reference": ">93%"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Additional Tests",
+    "parameter": "Alpha-1-Antitrypsin",
+    "range": "<27.5",
+    "unit": "mg/dL",
+    "original_reference": "<27.5 mg/dL"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Additional Tests",
+    "parameter": "Elastase-1",
+    "range": ">200",
+    "unit": "µg/g",
+    "original_reference": ">200 µg/g"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Additional Tests",
+    "parameter": "Chymotrypsin",
+    "range": ">120",
+    "unit": "U/g",
+    "original_reference": ">120 U/g"
+  },
+  {
+    "category": "Stool / Fecal Tests",
+    "test_name": "Additional Tests",
+    "parameter": "Trypsin",
+    "range": "Present (in children)",
+    "unit": "",
+    "original_reference": "Present (in children)"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Physical Examination",
+    "parameter": "Color",
+    "range": "Yellow to amber",
+    "unit": "",
+    "original_reference": "Yellow to amber"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Physical Examination",
+    "parameter": "Appearance",
+    "range": "Clear",
+    "unit": "",
+    "original_reference": "Clear"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Physical Examination",
+    "parameter": "Specific Gravity",
+    "range": "1.003-1.030",
+    "unit": "",
+    "original_reference": "1.003-1.030"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Physical Examination",
+    "parameter": "pH",
+    "range": "4.5-8.0",
+    "unit": "",
+    "original_reference": "4.5-8.0"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Chemical Examination",
+    "parameter": "Protein",
+    "range": "<30",
+    "unit": "mg/dL",
+    "original_reference": "Negative or trace (<30 mg/dL)"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Chemical Examination",
+    "parameter": "Glucose",
+    "range": "<15",
+    "unit": "mg/dL",
+    "original_reference": "Negative (<15 mg/dL)"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Chemical Examination",
+    "parameter": "Ketones",
+    "range": "<5",
+    "unit": "mg/dL",
+    "original_reference": "Negative (<5 mg/dL)"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Chemical Examination",
+    "parameter": "Blood",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Chemical Examination",
+    "parameter": "Bilirubin",
+    "range": "<0.2",
+    "unit": "mg/dL",
+    "original_reference": "Negative (<0.2 mg/dL)"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Chemical Examination",
+    "parameter": "Urobilinogen",
+    "range": "0.1-1.0",
+    "unit": "EU/dL",
+    "original_reference": "0.1-1.0 EU/dL"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Chemical Examination",
+    "parameter": "Nitrites",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Chemical Examination",
+    "parameter": "Leukocyte Esterase",
+    "range": "Negative",
+    "unit": "",
+    "original_reference": "Negative"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Microscopic Examination",
+    "parameter": "RBC",
+    "range": "0-2",
+    "unit": "per",
+    "original_reference": "0-2 per hpf"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Microscopic Examination",
+    "parameter": "WBC",
+    "range": "0-5",
+    "unit": "per",
+    "original_reference": "0-5 per hpf"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Microscopic Examination",
+    "parameter": "Epithelial Cells",
+    "range": "0-5",
+    "unit": "per",
+    "original_reference": "Few (0-5 per hpf)"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Microscopic Examination",
+    "parameter": "Bacteria",
+    "range": "None to few",
+    "unit": "",
+    "original_reference": "None to few"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Microscopic Examination",
+    "parameter": "Yeast",
+    "range": "None",
+    "unit": "",
+    "original_reference": "None"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Microscopic Examination",
+    "parameter": "Crystals",
+    "range": "None to few",
+    "unit": "",
+    "original_reference": "None to few"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Microscopic Examination",
+    "parameter": "Casts",
+    "range": "0-2",
+    "unit": "hyaline",
+    "original_reference": "0-2 hyaline casts per lpf"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Microscopic Examination",
+    "parameter": "Mucus",
+    "range": "None to few",
+    "unit": "",
+    "original_reference": "None to few"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Additional Tests",
+    "parameter": "Albumin",
+    "range": "<20",
+    "unit": "mg/L",
+    "original_reference": "<20 mg/L"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Additional Tests",
+    "parameter": "Creatinine",
+    "range": "30-300",
+    "unit": "mg/dL",
+    "original_reference": "30-300 mg/dL"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Additional Tests",
+    "parameter": "Microalbumin",
+    "range": "<30",
+    "unit": "mg/g",
+    "original_reference": "<30 mg/g creatinine"
+  },
+  {
+    "category": "Urinalysis",
+    "test_name": "Additional Tests",
+    "parameter": "Protein/Creatinine Ratio",
+    "range": "<0.2",
+    "unit": "mg/mg",
+    "original_reference": "<0.2 mg/mg"
+  }
+]
