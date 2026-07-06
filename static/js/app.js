@@ -1,8 +1,8 @@
 // Lab Management System JavaScript
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-hide alerts after 5 seconds
-    document.querySelectorAll('.alert').forEach(alert => {
+    // Auto-hide visible alerts after 5 seconds (skip hidden ones used by modals)
+    document.querySelectorAll('.alert:not(.d-none)').forEach(alert => {
         setTimeout(() => alert.remove(), 5000);
     });
 

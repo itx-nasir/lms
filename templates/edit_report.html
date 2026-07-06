@@ -1,110 +1,105 @@
 {% extends "base.html" %}
 
-{% block title %}Edit Report - Lab Management System{% endblock %}
+{% block title %}Edit Results - RPT-{{ order.id }} - Lab Management System{% endblock %}
 
 {% block content %}
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1><i class="fas fa-edit me-2"></i>Edit Test Results</h1>
-        <a href="/reports/{{ order.id }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-1"></i>Back to Report
-        </a>
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <h4 class="fw-bold mb-0"><i class="fas fa-edit me-2 text-primary"></i>Edit Test Results</h4>
+            <small class="text-muted">RPT-{{ order.id }} · {{ order.patient.name }} · {{ order.ordered_at.strftime('%d %b %Y') }}</small>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/reports/{{ order.id }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left me-1"></i>Back to Report
+            </a>
+        </div>
     </div>
 
-    <!-- Patient Info Card -->
+    <!-- Patient Info Strip -->
     <div class="card mb-4">
-        <div class="card-header">
-            <h5 class="mb-0"><i class="fas fa-user me-1"></i>Patient: {{ order.patient.name }}</h5>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-3">
-                    <strong>Age:</strong> {{ order.patient.age }} years
-                </div>
-                <div class="col-md-3">
-                    <strong>Gender:</strong> {{ order.patient.gender }}
-                </div>
-                <div class="col-md-3">
-                    <strong>Phone:</strong> {{ order.patient.phone }}
-                </div>
-                <div class="col-md-3">
-                    <strong>Report ID:</strong> RPT-{{ order.id }}
-                </div>
+        <div class="card-body py-2">
+            <div class="row g-2 small">
+                <div class="col-auto"><span class="text-muted">Patient:</span> <strong>{{ order.patient.name }}</strong></div>
+                <div class="col-auto"><span class="text-muted">Age:</span> <strong>{{ order.patient.age }} yrs</strong></div>
+                <div class="col-auto"><span class="text-muted">Gender:</span> <strong>{{ order.patient.gender }}</strong></div>
+                <div class="col-auto"><span class="text-muted">Phone:</span> <strong>{{ order.patient.phone }}</strong></div>
+                <div class="col-auto"><span class="text-muted">Referred By:</span> <strong>{{ order.referred_by or 'N/A' }}</strong></div>
             </div>
         </div>
     </div>
 
-    <!-- Test Results Form -->
+    <!-- Compact Results Form -->
     <form method="post" action="/reports/{{ order.id }}/update-all">
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fas fa-vial me-1"></i>Test Results</h5>
-                <button type="submit" class="btn btn-success">
-                    <i class="fas fa-save me-1"></i>Save All Changes
+            <div class="card-header py-2 d-flex align-items-center justify-content-between" style="background: linear-gradient(135deg, #f8f9fa, #eef3ff);">
+                <h6 class="mb-0 fw-bold"><i class="fas fa-flask me-2 text-primary"></i>Test Results</h6>
+                <button type="submit" class="btn btn-success btn-sm">
+                    <i class="fas fa-save me-1"></i>Save All
                 </button>
             </div>
-            <div class="card-body">
+            <div class="card-body p-0">
                 {% for group in group_order_items(order) %}
-                <h6 class="text-primary fw-bold mb-2"><i class="fas fa-layer-group me-1"></i>{{ group.label }}</h6>
-                {% for item in group['items'] %}
-                <div class="card mb-3">
-                    <div class="card-header bg-light">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="mb-0">{{ item.test.name }}</h6>
-                                <small class="text-muted">
-                                    Category: {{ item.test.category.name }}
-                                    {% if item.test.unit %} | Unit: {{ item.test.unit }}{% endif %}
-                                    {% if item.test.reference_range %} | Reference Range: {{ item.test.reference_range }}{% endif %}
-                                </small>
-                            </div>
-                            {% if item.result_value %}
-                            <span class="badge bg-success">Completed</span>
-                            {% else %}
-                            <span class="badge bg-warning">Pending</span>
-                            {% endif %}
-                        </div>
+                <div class="{% if not loop.last %}border-bottom{% endif %}">
+                    <div class="px-4 py-2 bg-light d-flex align-items-center gap-2">
+                        <i class="fas fa-layer-group text-primary small"></i>
+                        <span class="fw-bold small text-primary">{{ group.label }}</span>
+                        <span class="badge bg-light text-secondary border ms-auto">{{ group['items']|length }} test{{ 's' if group['items']|length != 1 }}</span>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="result_value_{{ item.id }}" class="form-label">
-                                    Result Value {% if item.test.unit %}<small class="text-muted">({{ item.test.unit }})</small>{% endif %}
-                                </label>
-                                <input type="text" class="form-control" id="result_value_{{ item.id }}" 
-                                       name="result_value_{{ item.id }}" value="{{ item.result_value or '' }}" 
-                                       placeholder="Enter test result">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="result_notes_{{ item.id }}" class="form-label">Notes (Optional)</label>
-                                <textarea class="form-control" id="result_notes_{{ item.id }}" 
-                                          name="result_notes_{{ item.id }}" rows="2" 
-                                          placeholder="Any additional notes or observations">{{ item.result_notes or '' }}</textarea>
-                            </div>
-                        </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4" style="min-width:160px">Test Name</th>
+                                    <th style="min-width:60px">Unit</th>
+                                    <th style="min-width:100px">Ref. Range</th>
+                                    <th style="min-width:160px">Result</th>
+                                    <th style="min-width:160px">Notes</th>
+                                    <th style="width:60px"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in group['items'] %}
+                                <tr>
+                                    <td class="ps-4 fw-semibold">{{ item.test.name }}</td>
+                                    <td class="text-muted small">{{ item.test.unit or '—' }}</td>
+                                    <td class="text-muted small">{{ item.test.reference_range or '—' }}</td>
+                                    <td>
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="result_value_{{ item.id }}"
+                                               value="{{ item.result_value or '' }}"
+                                               placeholder="Enter result">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="result_notes_{{ item.id }}"
+                                               value="{{ item.result_notes or '' }}"
+                                               placeholder="Notes (optional)">
+                                    </td>
+                                    <td class="text-center">
+                                        {% if item.result_value %}
+                                        <i class="fas fa-check-circle text-success" title="Has result"></i>
+                                        {% else %}
+                                        <i class="fas fa-circle text-muted" style="opacity:.3" title="No result yet"></i>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 {% endfor %}
-                {% endfor %}
             </div>
-            <div class="card-footer text-center">
-                <button type="submit" class="btn btn-success btn-lg">
-                    <i class="fas fa-save me-2"></i>Save All Test Results
+            <div class="card-footer text-center py-3 d-flex justify-content-center gap-3" style="background:#fafbff">
+                <button type="submit" class="btn btn-success px-5">
+                    <i class="fas fa-save me-2"></i>Save All Results
                 </button>
-                <a href="/reports/{{ order.id }}" class="btn btn-outline-secondary btn-lg ms-2">
-                    <i class="fas fa-times me-1"></i>Cancel
+                <a href="/reports/{{ order.id }}" class="btn btn-outline-primary px-4">
+                    <i class="fas fa-eye me-1"></i>View Report
                 </a>
             </div>
         </div>
     </form>
-
-    <div class="text-end mt-4">
-        <a href="/reports/{{ order.id }}" class="btn btn-success">
-            <i class="fas fa-eye me-1"></i>View Complete Report
-        </a>
-        <a href="/reports/{{ order.id }}/pdf" class="btn btn-primary">
-            <i class="fas fa-download me-1"></i>Download PDF
-        </a>
-    </div>
 </div>
 {% endblock %}

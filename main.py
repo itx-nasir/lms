@@ -5,7 +5,7 @@ from typing import Optional
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, HTTPException, Request, Form
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from markupsafe import Markup
@@ -144,6 +144,22 @@ async def update_patient_endpoint(
 async def delete_patient_endpoint(patient_id: int, user: str = Depends(get_current_user), db: Session = Depends(get_db)):
     crud.delete_patient(db, patient_id)
     return RedirectResponse(url="/patients?msg=Patient+deleted", status_code=302)
+
+@app.post("/api/patients")
+async def create_patient_api(
+    name: str = Form(...),
+    age: int = Form(...),
+    gender: str = Form(...),
+    phone: str = Form(...),
+    user: str = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    patient_data = schemas.PatientCreate(name=name, age=age, gender=gender, phone=phone)
+    patient = crud.create_patient(db, patient_data)
+    return JSONResponse(content={
+        "id": patient.id, "name": patient.name,
+        "age": patient.age, "gender": patient.gender, "phone": patient.phone,
+    })
 
 # Test Catalog routes (Tests + Panels management)
 @app.get("/tests", response_class=HTMLResponse)
@@ -337,7 +353,48 @@ async def order_detail_page(request: Request, order_id: int, msg: Optional[str] 
 @app.post("/orders/{order_id}/complete")
 async def complete_order_endpoint(order_id: int, user: str = Depends(get_current_user), db: Session = Depends(get_db)):
     crud.update_order_status(db, order_id, "completed")
-    return RedirectResponse(url=f"/orders/{order_id}?msg=Order+marked+as+completed", status_code=302)
+    return RedirectResponse(url=f"/reports/{order_id}?msg=Order+completed", status_code=302)
+
+@app.post("/orders/{order_id}/save-results")
+async def save_results_draft_endpoint(
+    request: Request, order_id: int,
+    user: str = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    form_data = await request.form()
+    order = crud.get_order(db, order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    for item in order.items:
+        result_value = form_data.get(f"result_value_{item.id}")
+        result_notes = form_data.get(f"result_notes_{item.id}")
+        if result_value is not None:
+            item_data = schemas.TestOrderItemUpdate(
+                result_value=result_value if result_value.strip() else None,
+                result_notes=result_notes if result_notes and result_notes.strip() else None,
+            )
+            crud.update_order_item_result(db, item.id, item_data)
+    return RedirectResponse(url=f"/orders/{order_id}?msg=Results+saved", status_code=302)
+
+@app.post("/orders/{order_id}/complete-with-results")
+async def complete_with_results_endpoint(
+    request: Request, order_id: int,
+    user: str = Depends(get_current_user), db: Session = Depends(get_db)
+):
+    form_data = await request.form()
+    order = crud.get_order(db, order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    for item in order.items:
+        result_value = form_data.get(f"result_value_{item.id}")
+        result_notes = form_data.get(f"result_notes_{item.id}")
+        if result_value is not None:
+            item_data = schemas.TestOrderItemUpdate(
+                result_value=result_value if result_value.strip() else None,
+                result_notes=result_notes if result_notes and result_notes.strip() else None,
+            )
+            crud.update_order_item_result(db, item.id, item_data)
+    crud.update_order_status(db, order_id, "completed")
+    return RedirectResponse(url=f"/reports/{order_id}?msg=Report+generated+successfully", status_code=302)
 
 @app.post("/orders/{order_id}/delete")
 async def delete_order_endpoint(order_id: int, user: str = Depends(get_current_user), db: Session = Depends(get_db)):
