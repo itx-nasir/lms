@@ -1158,3 +1158,329 @@ body {
   .pcard-sel { border-color: #1a56db !important; background: #eef3fe !important; }
   .pcard-sel .pcard-count { background: #d0defa; color: #1a56db; }
 }
+
+
+/* ── Premium Report Styles ──────────────────────────────────────────────── */
+
+.report-wrapper {
+  background: #f8faff;
+  border-radius: 20px;
+  padding: 10px;
+  box-shadow: 0 12px 40px rgba(0, 20, 60, 0.12);
+}
+.report-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 2px 12px rgba(0, 20, 60, 0.06);
+}
+
+/* Header */
+.report-header {
+  background: linear-gradient(145deg, #0b2a5c, #1a56db);
+  color: #fff;
+  padding: 1.5rem 2rem;
+  border-radius: 14px;
+  margin: -1.5rem -1.5rem 2rem -1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.report-header::after {
+  content: '';
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 200px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+}
+.header-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 0.25rem 1rem;
+  border-radius: 30px;
+  margin-bottom: 0.6rem;
+  color: #cfe0ff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.hospital-name {
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  margin: 0;
+  line-height: 1.2;
+  color: #fff;
+}
+.hospital-address {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0.2rem 0 0;
+}
+.hospital-address i { color: #f5d742; }
+.report-id {
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.15rem 1rem;
+  border-radius: 30px;
+  display: inline-block;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.report-date {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0.3rem 0;
+}
+
+/* Patient Section */
+.patient-section {
+  background: #f2f7ff;
+  border-radius: 14px;
+  padding: 1.2rem 1.8rem;
+  margin-bottom: 2rem;
+  border-left: 5px solid #1a56db;
+}
+.patient-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.5rem 1.5rem;
+  margin-top: 0.3rem;
+}
+.patient-grid .label {
+  font-weight: 600;
+  color: #4a5a7a;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: block;
+}
+.patient-grid .value {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: #0b2a5c;
+}
+
+/* Section Titles */
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0b2a5c;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+.section-title i { color: #1a56db; }
+
+/* Test Groups */
+.test-group {
+  margin-bottom: 2rem;
+}
+.group-name {
+  font-weight: 700;
+  color: #1a3b77;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  background: #ecf3ff;
+  display: inline-block;
+  padding: 0.2rem 1.2rem;
+  border-radius: 30px;
+  letter-spacing: 0.02em;
+}
+.results-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.results-table thead th {
+  background: linear-gradient(135deg, #1a56db, #0f3fa8);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.8rem 1rem;
+  border: none;
+}
+.results-table tbody tr {
+  transition: background 0.15s;
+}
+.results-table tbody tr:nth-child(even) {
+  background: #f8fbff;
+}
+.results-table tbody tr:hover {
+  background: #edf3fa;
+}
+.results-table td {
+  padding: 0.7rem 1rem;
+  border-top: 1px solid #e9edf4;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+.results-table td:first-child {
+  font-weight: 600;
+  color: #0b2a5c;
+}
+.result-value {
+  font-weight: 700;
+  color: #1a56db;
+  background: #eaf2ff;
+  padding: 0.1rem 0.6rem;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* Footer */
+.report-footer {
+  text-align: center;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid #e2e9f5;
+  color: #4a5a7a;
+  font-size: 0.85rem;
+}
+.footer-divider {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #1a56db, #f5d742);
+  margin: 0.8rem auto;
+  border-radius: 6px;
+}
+.generated {
+  font-size: 0.75rem;
+  color: #8896af;
+}
+
+/* Print overrides for the new layout */
+@media print {
+  * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+  }
+
+  .no-print { display: none !important; }
+
+  /* Root scale — keeps everything proportionally compact */
+  html { font-size: 10pt !important; }
+
+  body {
+      background: #fff !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      font-size: 10pt !important;
+      line-height: 1.3 !important;
+  }
+
+  main {
+      margin: 0 !important;
+      padding: 0 !important;
+  }
+
+  .container, .container-fluid {
+      padding: 0 !important;
+      max-width: 100% !important;
+      width: 100% !important;
+  }
+
+  .py-4, .mb-4 { padding: 0 !important; margin: 0 !important; }
+
+  /* Wrapper & card */
+  .report-wrapper {
+      background: none !important;
+      padding: 0 !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+  }
+  .report-card {
+      padding: 0.3in 0.4in !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+  }
+
+  /* Header */
+  .report-header {
+      border-radius: 0 !important;
+      margin: -0.3in -0.4in 0.6rem -0.4in !important;
+      padding: 0.5rem 0.8rem !important;
+  }
+  .hospital-name { font-size: 1.3rem !important; }
+  .hospital-address { font-size: 0.75rem !important; margin: 0 !important; }
+  .header-badge { font-size: 0.6rem !important; margin-bottom: 0.2rem !important; }
+  .report-id { font-size: 0.85rem !important; }
+  .report-date { font-size: 0.75rem !important; margin: 0.1rem 0 !important; }
+
+  /* Patient section */
+  .patient-section {
+      padding: 0.5rem 0.8rem !important;
+      margin-bottom: 0.6rem !important;
+      border-left-width: 3px !important;
+  }
+  .section-title {
+      font-size: 0.85rem !important;
+      margin-bottom: 0.35rem !important;
+  }
+  .patient-grid { gap: 0.2rem 0.8rem !important; margin-top: 0.15rem !important; }
+  .patient-grid .label { font-size: 0.65rem !important; }
+  .patient-grid .value { font-size: 0.85rem !important; }
+
+  /* Results section */
+  .results-section .section-title { margin-bottom: 0.3rem !important; }
+  .test-group {
+      margin-bottom: 0.6rem !important;
+      page-break-inside: avoid;
+  }
+  .group-name {
+      font-size: 0.8rem !important;
+      padding: 0.1rem 0.7rem !important;
+      margin-bottom: 0.25rem !important;
+  }
+
+  /* Table */
+  .results-table {
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      font-size: 0.78rem !important;
+  }
+  .results-table thead th {
+      padding: 0.3rem 0.5rem !important;
+      font-size: 0.7rem !important;
+  }
+  .results-table td {
+      padding: 0.25rem 0.5rem !important;
+      font-size: 0.78rem !important;
+  }
+  .result-value {
+      padding: 0.05rem 0.3rem !important;
+      font-size: 0.78rem !important;
+  }
+
+  /* Footer */
+  .report-footer {
+      margin-top: 0.8rem !important;
+      padding-top: 0.5rem !important;
+      font-size: 0.72rem !important;
+  }
+  .footer-divider { margin: 0.3rem auto !important; height: 2px !important; }
+  .generated { font-size: 0.65rem !important; }
+
+  /* Bootstrap table resets */
+  .table { margin-bottom: 0 !important; }
+  .table > :not(caption) > * > * { padding: 0.25rem 0.5rem !important; }
+  .table-responsive { overflow: visible !important; }
+}
+
+/* Responsive tweaks for the new layout */
+@media (max-width: 768px) {
+  .report-card { padding: 1rem; }
+  .report-header { padding: 1rem; margin: -0.8rem -0.8rem 1.5rem -0.8rem; }
+  .hospital-name { font-size: 1.3rem; }
+  .patient-grid { grid-template-columns: 1fr 1fr; }
+}

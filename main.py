@@ -5,7 +5,7 @@ from typing import Optional
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, HTTPException, Request, Form
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from markupsafe import Markup
@@ -429,31 +429,6 @@ async def update_report_item_endpoint(
     
     return RedirectResponse(url=f"/reports/{item.order_id}/edit", status_code=302)
 
-@app.get("/reports/{order_id}/pdf")
-async def download_report_pdf(order_id: int, user: str = Depends(get_current_user), db: Session = Depends(get_db)):
-    order = crud.get_order(db, order_id)
-    if not order or order.status != "completed":
-        raise HTTPException(status_code=404, detail="Completed order not found")
-    
-    try:
-        from utils import WEASYPRINT_AVAILABLE, generate_report_pdf, generate_report_html
-        
-        if WEASYPRINT_AVAILABLE:
-            pdf_bytes = generate_report_pdf(order)
-            return Response(
-                content=pdf_bytes,
-                media_type="application/pdf",
-                headers={"Content-Disposition": f"attachment; filename=report_{order_id}.pdf"}
-            )
-        
-        html_content = generate_report_html(order)
-        return Response(
-            content=html_content.encode('utf-8'),
-            media_type="text/html",
-            headers={"Content-Disposition": f"inline; filename=report_{order_id}.html"}
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error generating report: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn
