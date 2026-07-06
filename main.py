@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -320,6 +320,7 @@ async def create_order_endpoint(
     request: Request,
     patient_id: int = Form(...),
     referred_by: Optional[str] = Form(None),
+    sample_collected_at: Optional[str] = Form(None),
     user: str = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -330,8 +331,16 @@ async def create_order_endpoint(
     if not test_ids and not panel_ids:
         return RedirectResponse(url="/orders/new", status_code=302)
 
+    parsed_sample_date = None
+    if sample_collected_at:
+        try:
+            parsed_sample_date = datetime.fromisoformat(sample_collected_at)
+        except ValueError:
+            pass
+
     order_data = schemas.TestOrderCreate(
-        patient_id=patient_id, test_ids=test_ids, panel_ids=panel_ids, referred_by=referred_by
+        patient_id=patient_id, test_ids=test_ids, panel_ids=panel_ids,
+        referred_by=referred_by, sample_collected_at=parsed_sample_date,
     )
     order = crud.create_order(db, order_data)
     return RedirectResponse(url=f"/orders/{order.id}", status_code=302)

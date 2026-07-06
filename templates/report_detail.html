@@ -4,91 +4,73 @@
 
 {% block content %}
 <div class="container py-4">
-    <!-- Action Buttons -->
-    <div class="d-flex justify-content-end gap-2 mb-4 no-print">
+    <div class="d-flex justify-content-end gap-2 mb-4 no-print flex-wrap">
         <a href="/reports/{{ order.id }}/edit" class="btn btn-outline-primary btn-sm">
             <i class="fas fa-edit me-1"></i>Edit Results
         </a>
-        <button onclick="document.title='RPT-{{ order.id }} - {{ order.patient.name }}'; window.print();" class="btn btn-primary btn-sm">
-            <i class="fas fa-download me-1"></i>Download PDF
+        <button onclick="downloadElementPDF('reportContent', 'Report_RPT-{{ order.id }}_{{ order.patient.name|replace(' ','_') }}.pdf')" class="btn btn-primary btn-sm">
+            <i class="fas fa-file-pdf me-1"></i>Download PDF
         </button>
-        <button onclick="sendWhatsApp()" class="btn btn-success btn-sm">
-            <i class="fab fa-whatsapp me-1"></i>Send via WhatsApp
+        <button onclick="printElement('reportContent', 'Report RPT-{{ order.id }}')" class="btn btn-outline-dark btn-sm">
+            <i class="fas fa-print me-1"></i>Print
         </button>
         <a href="/reports" class="btn btn-secondary btn-sm">
             <i class="fas fa-arrow-left me-1"></i>Back
         </a>
     </div>
 
-    <!-- Report Card -->
     <div class="report-wrapper" id="reportContent">
         <div class="report-card">
 
-            <!-- HEADER -->
             <div class="report-header">
-                <div class="header-badge">LABORATORY REPORT</div>
                 <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h1 class="hospital-name">Rehman Medical &amp; Surgical Hospital</h1>
+                    <div class="col-3 col-md-2 text-center">
+                        <img src="/static/images/lab_logo.png" alt="KML" class="report-logo">
+                    </div>
+                    <div class="col-6 col-md-8 text-center">
+                        <div class="header-badge">LABORATORY REPORT</div>
+                        <h1 class="hospital-name">KHALID MEDICAL LABORATORY</h1>
+                        <p class="hospital-name-urdu">خالد میڈیکل لیبارٹری</p>
                         <p class="hospital-address">
-                            <i class="fas fa-map-pin me-1"></i> Sabir Abad Chowk, Shakardara, Karak &nbsp;|&nbsp;
-                            <i class="fas fa-phone me-1"></i> 0334-8686184
+                            <i class="fas fa-map-pin me-1"></i> Opposite Tehsil Headquarter Hospital, Banda Daud Shah, Karak
+                        </p>
+                        <p class="hospital-phones">
+                            <i class="fas fa-phone me-1"></i> 0334-8686184 / 0315-9795902 / 0346-9044730 / 0315-9045966
                         </p>
                     </div>
-                    <div class="col-md-4 text-md-end">
+                    <div class="col-3 col-md-2 text-center">
                         <div class="report-id">RPT-{{ order.id }}</div>
-                        <div class="report-date">
-                            <i class="far fa-calendar-alt me-1"></i> {{ order.ordered_at.strftime('%B %d, %Y') }}
-                        </div>
-                        <span class="badge bg-success bg-opacity-75">Final Report</span>
                     </div>
                 </div>
             </div>
 
-            <!-- PATIENT INFO -->
             <div class="patient-section">
-                <div class="section-title">
-                    <i class="fas fa-user-circle me-2"></i> Patient Information
-                </div>
+                <div class="section-title"><i class="fas fa-user-circle me-2"></i> Patient Information</div>
                 <div class="patient-grid">
                     <div><span class="label">Name</span><span class="value">{{ order.patient.name }}</span></div>
                     <div><span class="label">Age / Gender</span><span class="value">{{ order.patient.age }} yrs / {{ order.patient.gender }}</span></div>
                     <div><span class="label">Phone</span><span class="value">{{ order.patient.phone }}</span></div>
-                    <div><span class="label">Refer By</span><span class="value">{{ order.referred_by or 'N/A' }}</span></div>
+                    <div><span class="label">Referred By</span><span class="value">{{ order.referred_by or 'N/A' }}</span></div>
+                    <div><span class="label">Sample Collected</span><span class="value">{{ (order.sample_collected_at or order.ordered_at).strftime('%d %b %Y, %I:%M %p') }}</span></div>
+                    <div><span class="label">Reported On</span><span class="value">{{ (order.reported_at or order.ordered_at).strftime('%d %b %Y, %I:%M %p') }}</span></div>
                 </div>
             </div>
 
-            <!-- TEST RESULTS -->
             <div class="results-section">
-                <div class="section-title">
-                    <i class="fas fa-flask me-2"></i> Test Results
-                </div>
-
+                <div class="section-title"><i class="fas fa-flask me-2"></i> Test Results</div>
                 {% for group in group_order_items(order) %}
                 <div class="test-group">
                     <h5 class="group-name">{{ group.label }}</h5>
                     <div class="table-responsive">
                         <table class="table results-table">
                             <thead>
-                                <tr>
-                                    <th>Test</th>
-                                    <th>Result</th>
-                                    <th>Unit</th>
-                                    <th>Reference Range</th>
-                                    <th>Notes</th>
-                                </tr>
+                                <tr><th>Test</th><th>Result</th><th>Unit</th><th>Reference Range</th><th>Notes</th></tr>
                             </thead>
                             <tbody>
                                 {% for item in group['items'] %}
                                 <tr>
                                     <td><strong>{{ item.test.name }}</strong></td>
-                                    <td>
-                                        {% if item.result_value %}
-                                            <span class="result-value">{{ item.result_value }}</span>
-                                        {% else %}
-                                            <span class="text-muted">—</span>
-                                        {% endif %}
-                                    </td>
+                                    <td>{% if item.result_value %}<span class="result-value">{{ item.result_value }}</span>{% else %}<span class="text-muted">—</span>{% endif %}</td>
                                     <td>{{ item.test.unit or '—' }}</td>
                                     <td>{{ item.test.reference_range or '—' }}</td>
                                     <td>{{ item.result_notes or '—' }}</td>
@@ -101,33 +83,16 @@
                 {% endfor %}
             </div>
 
-            <!-- FOOTER -->
             <div class="report-footer">
                 <p class="mb-1">This report is computer generated and does not require a signature.</p>
                 <p class="mb-0">For queries, please contact the laboratory.</p>
                 <div class="footer-divider"></div>
-                <p class="generated">Generated on {{ order.ordered_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                <p class="generated">Printed on <span class="print-timestamp"></span></p>
             </div>
 
-        </div><!-- /report-card -->
-    </div><!-- /report-wrapper -->
+        </div>
+    </div>
 </div>
 
-<script>
-function sendWhatsApp() {
-    var raw = "{{ order.patient.phone }}".replace(/\D/g, '');
-    // Convert local Pakistani format 03xx to international 923xx
-    if (raw.startsWith('0')) raw = '92' + raw.slice(1);
-    var phone = prompt("Confirm WhatsApp number (international format):", raw);
-    if (!phone) return;
-    phone = phone.replace(/\D/g, '');
-    var message =
-        "🧪 *Lab Report - RPT-{{ order.id }}*\n" +
-        "Patient: {{ order.patient.name }}\n" +
-        "Date: {{ order.ordered_at.strftime('%B %d, %Y') }}\n\n" +
-        "Your lab report is ready. Please visit the lab to collect a printed copy or contact us for details.\n\n" +
-        "Rehman Medical & Surgical Hospital\n📞 0334-8686184";
-    window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(message), "whatsapp_web");
-}
-</script>
+<script>_stampTimestamps(document);</script>
 {% endblock %}

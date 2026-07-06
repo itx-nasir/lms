@@ -193,6 +193,12 @@
       <small class="text-muted">Placed {{ order.ordered_at.strftime('%B %d, %Y at %H:%M') }}</small>
     </div>
     <div class="d-flex gap-2 flex-wrap">
+      <button onclick="downloadInvoicePDF()" class="btn btn-outline-success btn-sm">
+        <i class="fas fa-file-invoice me-1"></i>Download Invoice
+      </button>
+      <button onclick="printInvoice()" class="btn btn-outline-dark btn-sm">
+        <i class="fas fa-print me-1"></i>Print Invoice
+      </button>
       {% if order.status == 'pending' %}
       <form method="post" action="/orders/{{ order.id }}/delete" class="d-inline">
         <button type="submit" class="btn btn-outline-danger btn-sm"
@@ -202,7 +208,7 @@
       </form>
       {% endif %}
       {% if order.status == 'completed' %}
-      <a href="/reports/{{ order.id }}" class="btn btn-primary">
+      <a href="/reports/{{ order.id }}" class="btn btn-primary btn-sm">
         <i class="fas fa-file-alt me-1"></i>View Report
       </a>
       {% endif %}
@@ -230,9 +236,13 @@
           </div>
           <div class="row g-2 small">
             <div class="col-6"><span class="text-muted">Order ID</span><br><strong>ORD-{{ order.id }}</strong></div>
-            <div class="col-6"><span class="text-muted">Date</span><br><strong>{{ order.ordered_at.strftime('%d %b %Y') }}</strong></div>
+            <div class="col-6"><span class="text-muted">Order Date</span><br><strong>{{ order.ordered_at.strftime('%d %b %Y') }}</strong></div>
             <div class="col-6"><span class="text-muted">Total</span><br><strong class="text-success">PKR {{ "%.0f"|format(order.total_amount) }}</strong></div>
             <div class="col-6"><span class="text-muted">Referred By</span><br><strong>{{ order.referred_by or 'N/A' }}</strong></div>
+            <div class="col-6"><span class="text-muted">Sample Collected</span><br><strong>{{ (order.sample_collected_at or order.ordered_at).strftime('%d %b %Y %H:%M') }}</strong></div>
+            {% if order.reported_at %}
+            <div class="col-6"><span class="text-muted">Reported</span><br><strong>{{ order.reported_at.strftime('%d %b %Y %H:%M') }}</strong></div>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -383,7 +393,114 @@
   </div>
   {% endif %}
 
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  INVOICE (always available once order is placed)            -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="report-wrapper mt-4" id="orderInvoiceContent">
+    <div class="report-card">
+
+      <!-- HEADER WITH LOGO -->
+      <div class="report-header invoice-header">
+        <div class="row align-items-center">
+          <div class="col-3 col-md-2 text-center">
+            <img src="/static/images/lab_logo.png" alt="Khalid Medical Laboratory" class="report-logo">
+          </div>
+          <div class="col-6 col-md-8 text-center">
+            <div class="header-badge">INVOICE</div>
+            <h1 class="hospital-name">KHALID MEDICAL LABORATORY</h1>
+            <p class="hospital-name-urdu">خالد میڈیکل لیبارٹری</p>
+            <p class="hospital-address">
+              <i class="fas fa-map-pin me-1"></i> Opposite Tehsil Headquarter Hospital, Banda Daud Shah, Karak
+            </p>
+            <p class="hospital-phones">
+              <i class="fas fa-phone me-1"></i> 0334-8686184 / 0315-9795902 / 0346-9044730 / 0315-9045966
+            </p>
+          </div>
+          <div class="col-3 col-md-2 text-center">
+            <div class="report-id">INV-{{ order.id }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PATIENT / BILLING INFO -->
+      <div class="patient-section" style="background:#f2f7ff;border-left-color:#1a56db">
+        <div class="section-title" style="color:#0b2a5c">
+          <i class="fas fa-user-circle me-2" style="color:#1a56db"></i> Bill To
+        </div>
+        <div class="patient-grid">
+          <div><span class="label">Patient Name</span><span class="value">{{ order.patient.name }}</span></div>
+          <div><span class="label">Age / Gender</span><span class="value">{{ order.patient.age }} yrs / {{ order.patient.gender }}</span></div>
+          <div><span class="label">Phone</span><span class="value">{{ order.patient.phone }}</span></div>
+          <div><span class="label">Order Date</span><span class="value">{{ order.ordered_at.strftime('%d %b %Y, %I:%M %p') }}</span></div>
+          <div><span class="label">Referred By</span><span class="value">{{ order.referred_by or 'N/A' }}</span></div>
+          <div><span class="label">Invoice #</span><span class="value">INV-{{ order.id }}</span></div>
+        </div>
+      </div>
+
+      <!-- LINE ITEMS -->
+      <div class="results-section">
+        <div class="section-title" style="color:#0b2a5c">
+          <i class="fas fa-list-check me-2" style="color:#1a56db"></i> Items
+        </div>
+        <div class="table-responsive">
+          <table class="table results-table">
+            <thead>
+              <tr>
+                <th style="width:10%">#</th>
+                <th>Description</th>
+                <th style="width:25%" class="text-end">Amount (PKR)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% set ns = namespace(row=0) %}
+              {% for po in order.panel_orders %}
+              {% set ns.row = ns.row + 1 %}
+              <tr>
+                <td>{{ ns.row }}</td>
+                <td>
+                  <strong>{{ po.panel.name }}</strong>
+                  <span class="text-muted small d-block">{{ po.items|length }} tests included</span>
+                </td>
+                <td class="text-end fw-semibold">{{ "%.0f"|format(po.price) }}</td>
+              </tr>
+              {% endfor %}
+
+              {% for item in order.items if not item.panel_order_id %}
+              {% set ns.row = ns.row + 1 %}
+              <tr>
+                <td>{{ ns.row }}</td>
+                <td><strong>{{ item.test.name }}</strong></td>
+                <td class="text-end fw-semibold">{{ "%.0f"|format(item.unit_price) }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot>
+              <tr class="invoice-total-row">
+                <td colspan="2" class="text-end"><strong>Total Amount</strong></td>
+                <td class="text-end"><strong class="text-success" style="font-size:1.15rem">PKR {{ "%.0f"|format(order.total_amount) }}</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="report-footer">
+        <p class="mb-1">Thank you for choosing Khalid Medical Laboratory.</p>
+        <div class="footer-divider" style="background:linear-gradient(90deg,#1a56db,#f5d742)"></div>
+        <p class="generated">Printed on <span class="inv-print-timestamp"></span></p>
+      </div>
+
+    </div>
+  </div>
+
 </div>
+
+<script>
+_stampTimestamps(document, '.inv-print-timestamp');
+function printInvoice() { printElement('orderInvoiceContent', 'Invoice INV-{{ order.id }}', '.inv-print-timestamp'); }
+function downloadInvoicePDF() { downloadElementPDF('orderInvoiceContent', 'Invoice_INV-{{ order.id }}_{{ order.patient.name|replace(" ","_") }}.pdf', '.inv-print-timestamp'); }
+</script>
 
 
 {# ═══════════════════════════════════════════════════════════════════════ #}
@@ -453,6 +570,16 @@
                   </label>
                   <input type="text" class="premium-input" id="referred_by" name="referred_by"
                          placeholder="Dr. Ahmed…" />
+                </div>
+              </div>
+              <div class="row g-3 mt-1">
+                <div class="col-md-4">
+                  <label class="field-label" for="sample_collected_at">
+                    <i class="fas fa-vial"></i> Sample Collection Date
+                    <span class="field-label-opt">(optional)</span>
+                  </label>
+                  <input type="datetime-local" class="premium-input" id="sample_collected_at"
+                         name="sample_collected_at" />
                 </div>
               </div>
             </form>

@@ -121,6 +121,7 @@ class TestOrderBase(BaseModel):
     patient_id: int
     status: str = "pending"
     referred_by: Optional[str] = None
+    sample_collected_at: Optional[datetime] = None
 
 class TestOrderCreate(TestOrderBase):
     test_ids: List[int] = []
@@ -128,6 +129,8 @@ class TestOrderCreate(TestOrderBase):
 
 class TestOrderUpdate(BaseModel):
     status: Optional[str] = None
+    sample_collected_at: Optional[datetime] = None
+    reported_at: Optional[datetime] = None
 
 class TestOrder(TestOrderBase):
     id: int

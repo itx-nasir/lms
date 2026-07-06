@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import or_, func, case
 from models import (
@@ -207,6 +209,7 @@ def create_order(db: Session, order: TestOrderCreate):
         total_amount=total_amount,
         status=order.status,
         referred_by=order.referred_by,
+        sample_collected_at=order.sample_collected_at,
     )
     db.add(db_order)
     db.flush()  # get order.id
@@ -239,6 +242,10 @@ def update_order_status(db: Session, order_id: int, status: str):
     db_order = db.query(TestOrder).filter(TestOrder.id == order_id).first()
     if db_order:
         db_order.status = status
+        if status == "completed" and not db_order.reported_at:
+            db_order.reported_at = datetime.utcnow()
+        if not db_order.sample_collected_at:
+            db_order.sample_collected_at = db_order.ordered_at
         db.commit()
         db.refresh(db_order)
     return db_order
