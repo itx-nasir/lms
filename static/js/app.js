@@ -68,8 +68,8 @@ function printElement(elementId, title, tsSelector) {
     if (!content) return;
     var w = window.open('', '_blank', 'width=900,height=700');
     w.document.write('<!DOCTYPE html><html><head><title>' + (title || 'Print') + '</title>');
-    w.document.write('<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">');
-    w.document.write('<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">');
+    w.document.write('<link href="/static/vendor/css/bootstrap.min.css" rel="stylesheet">');
+    w.document.write('<link href="/static/vendor/css/fontawesome.min.css" rel="stylesheet">');
     w.document.write('<link href="/static/css/style.css" rel="stylesheet">');
     w.document.write('<style>body{background:#fff!important;margin:0;padding:10px}.report-wrapper{box-shadow:none!important;padding:0!important;background:#fff!important}.report-card{box-shadow:none!important}</style>');
     w.document.write('</head><body>');
