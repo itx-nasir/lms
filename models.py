@@ -106,6 +106,7 @@ class TestOrder(Base):
     patient = relationship("Patient", back_populates="orders")
     items = relationship("TestOrderItem", back_populates="order", cascade="all, delete-orphan")
     panel_orders = relationship("PanelOrder", back_populates="order", cascade="all, delete-orphan")
+    share_links = relationship("ReportShareLink", back_populates="order", cascade="all, delete-orphan")
 
 
 class PanelOrder(Base):
@@ -136,3 +137,16 @@ class TestOrderItem(Base):
     order = relationship("TestOrder", back_populates="items")
     test = relationship("Test", back_populates="order_items")
     panel_order = relationship("PanelOrder", back_populates="items")
+
+
+class ReportShareLink(Base):
+    """An unguessable token that lets a patient open one report without logging in."""
+    __tablename__ = "report_share_links"
+
+    id = Column(Integer, primary_key=True, index=True)
+    order_id = Column(Integer, ForeignKey("test_orders.id"), nullable=False)
+    token = Column(String(64), unique=True, index=True, nullable=False)
+    created_at = Column(DateTime, nullable=False, default=datetime.now)
+    expires_at = Column(DateTime, nullable=False)
+
+    order = relationship("TestOrder", back_populates="share_links")

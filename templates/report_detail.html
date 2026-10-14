@@ -4,8 +4,11 @@
 {% block title %}Report RPT-{{ order.id }} · {{ order.patient.name }}{% endblock %}
 
 {% block content %}
+<div class="{{ 'container py-4' if public }}">
 <div class="doc-toolbar no-print">
+    {% if public %}<span></span>{% else %}
     <a href="/reports" class="back-link"><i class="fas fa-arrow-left me-1"></i>All reports</a>
+    {% endif %}
     <div class="d-flex gap-2 flex-wrap">
         <button type="button" onclick="window.print()" class="btn btn-primary">
             <i class="fas fa-print me-1"></i>Print
@@ -14,12 +17,23 @@
                 data-pdf-target="reportContent" data-pdf-name="Report RPT-{{ order.id }} {{ order.patient.name }}">
             <i class="fas fa-file-pdf me-1"></i>Download PDF
         </button>
+        {% if not public %}
+        {% if whatsapp_url %}
+        <a href="{{ whatsapp_url }}" target="_blank" rel="noopener" class="btn btn-success">
+            <i class="fab fa-whatsapp me-1"></i>Send via WhatsApp
+        </a>
+        {% else %}
+        <span class="btn btn-outline-danger disabled" role="alert">
+            <i class="fab fa-whatsapp me-1"></i>Can't send on WhatsApp: patient phone number is missing or invalid
+        </span>
+        {% endif %}
         <a href="/orders/{{ order.id }}" class="btn btn-outline-secondary">
             <i class="fas fa-pen-to-square me-1"></i>Edit results
         </a>
         <a href="/orders/{{ order.id }}/invoice" class="btn btn-outline-secondary">
             <i class="fas fa-receipt me-1"></i>Invoice
         </a>
+        {% endif %}
     </div>
 </div>
 
@@ -77,6 +91,7 @@
             <p class="generated">Printed on <span class="print-timestamp"></span></p>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}
 

@@ -1,4 +1,5 @@
-from datetime import datetime, time
+import secrets
+from datetime import datetime, time, timedelta
 from typing import Optional
 
 from sqlalchemy import case, func
@@ -6,8 +7,8 @@ from sqlalchemy.orm import Session, joinedload
 
 from auth import get_password_hash
 from models import (
-    AdminUser, Panel, PanelOrder, PanelTest, Patient, Test, TestCategory,
-    TestOrder, TestOrderItem,
+    AdminUser, Panel, PanelOrder, PanelTest, Patient, ReportShareLink, Test,
+    TestCategory, TestOrder, TestOrderItem,
 )
 from schemas import CategoryIn, OrderIn, PanelIn, PatientIn, TestIn
 
@@ -230,8 +231,48 @@ def complete_order(db: Session, order: TestOrder) -> None:
 
 
 def delete_order(db: Session, order: TestOrder) -> None:
-    db.delete(order)  # cascades to items and panel_orders
+    db.delete(order)  # cascades to items, panel_orders and share_links
     db.commit()
+
+
+# ── Report share links ───────────────────────────────────────────────────────
+SHARE_LINK_LIFETIME = timedelta(days=7)
+SHARE_LINK_REUSE_WINDOW = timedelta(days=1)
+
+
+def get_or_create_share_link(db: Session, order: TestOrder) -> ReportShareLink:
+    """Reuse a link created within the last day so reloading the report page
+    doesn't mint a new token each time; otherwise issue a fresh 7-day link."""
+    now = datetime.now()
+    link = (
+        db.query(ReportShareLink)
+        .filter(
+            ReportShareLink.order_id == order.id,
+            ReportShareLink.created_at >= now - SHARE_LINK_REUSE_WINDOW,
+            ReportShareLink.expires_at > now,
+        )
+        .order_by(ReportShareLink.created_at.desc())
+        .first()
+    )
+    if link:
+        return link
+    db.query(ReportShareLink).filter(ReportShareLink.expires_at < now).delete()
+    link = ReportShareLink(
+        order_id=order.id, token=secrets.token_urlsafe(32),
+        created_at=now, expires_at=now + SHARE_LINK_LIFETIME,
+    )
+    db.add(link)
+    db.commit()
+    return link
+
+
+def get_order_by_share_token(db: Session, token: str):
+    link = (
+        db.query(ReportShareLink)
+        .filter(ReportShareLink.token == token, ReportShareLink.expires_at > datetime.now())
+        .first()
+    )
+    return link.order if link else None
 
 
 # ── Dashboard ────────────────────────────────────────────────────────────────
