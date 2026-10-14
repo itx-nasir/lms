@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Lab Management System{% endblock %}</title>
+    <title>{% block title %}{% endblock %} · Khalid Medical Laboratory</title>
+    <link rel="icon" href="/static/images/lab_logo.png">
     <link href="/static/vendor/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/vendor/css/fontawesome.min.css" rel="stylesheet">
     <link href="/static/css/style.css" rel="stylesheet">
@@ -11,93 +12,72 @@
 <body>
     {% if user %}
     {% set path = request.url.path %}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary no-print">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="/dashboard">
-                <i class="fas fa-flask me-2"></i>Lab Management
+    {% set nav = [
+        ('/dashboard', 'Home', 'fa-house'),
+        ('/orders', 'Orders', 'fa-clipboard-list'),
+        ('/reports', 'Reports', 'fa-file-medical'),
+        ('/patients', 'Patients', 'fa-users'),
+        ('/tests', 'Tests & Prices', 'fa-vials'),
+    ] %}
+    <nav class="navbar navbar-expand-lg navbar-dark app-navbar no-print">
+        <div class="container-fluid app-container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/dashboard">
+                <img src="/static/images/lab_logo.png" alt="" class="brand-logo">
+                <span>Khalid Medical Lab</span>
             </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-label="Menu">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto gap-lg-1">
+                    {% for href, label, icon in nav %}
                     <li class="nav-item">
-                        <a class="nav-link {% if path == '/dashboard' %}active fw-semibold{% endif %}" href="/dashboard">
-                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        <a class="nav-link {% if path.startswith(href) and not (href == '/orders' and path == '/orders/new') %}active{% endif %}" href="{{ href }}">
+                            <i class="fas {{ icon }} me-1"></i>{{ label }}
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if path.startswith('/patients') %}active fw-semibold{% endif %}" href="/patients">
-                            <i class="fas fa-users me-1"></i>Patients
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if path.startswith('/tests') or path.startswith('/test-') %}active fw-semibold{% endif %}" href="/tests">
-                            <i class="fas fa-vial me-1"></i>Tests
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if path.startswith('/orders') %}active fw-semibold{% endif %}" href="/orders">
-                            <i class="fas fa-clipboard-list me-1"></i>Orders
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if path.startswith('/reports') %}active fw-semibold{% endif %}" href="/reports">
-                            <i class="fas fa-file-medical me-1"></i>Reports
-                        </a>
-                    </li>
+                    {% endfor %}
                 </ul>
-                <ul class="navbar-nav align-items-center">
-                    <li class="nav-item me-2">
-                        <a class="btn btn-sm btn-light text-primary fw-semibold" href="/orders/new">
-                            <i class="fas fa-plus me-1"></i>New Order
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                <div class="d-flex align-items-center gap-2">
+                    <a class="btn btn-warning fw-semibold btn-new-order" href="/orders/new">
+                        <i class="fas fa-plus me-1"></i>New Order
+                    </a>
+                    <div class="dropdown">
+                        <a class="nav-link text-white dropdown-toggle px-2" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-user-circle me-1"></i>{{ user }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><span class="dropdown-item-text text-muted small">Signed in as <strong>{{ user }}</strong></span></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            <li><a class="dropdown-item text-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Log out</a></li>
                         </ul>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
     {% endif %}
 
-    <main class="{% if user %}container-fluid mt-4{% else %}{% endif %}">
+    <main class="{% if user %}container-fluid app-container py-4{% endif %}">
         {% block content %}{% endblock %}
     </main>
 
-    <script src="/static/vendor/js/bootstrap.bundle.min.js"></script>
-    <script src="/static/vendor/js/jspdf.umd.min.js"></script>
-    <script src="/static/vendor/js/html2canvas.min.js"></script>
-    <script src="/static/js/app.js"></script>
-
-    {% if toast %}
-    <!-- Toast notification -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1100">
-      <div id="appToast" class="toast align-items-center text-bg-success border-0 shadow" role="alert">
-        <div class="d-flex">
-          <div class="toast-body fw-semibold">
-            <i class="fas fa-check-circle me-2"></i>{{ toast }}
-          </div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    {% set toast_msg = request.query_params.get('error') or request.query_params.get('msg') %}
+    {% if toast_msg %}
+    {% set is_error = request.query_params.get('error') %}
+    <div class="toast-container position-fixed top-0 end-0 p-3 app-toast no-print">
+        <div id="appToast" class="toast align-items-center border-0 shadow {{ 'text-bg-danger' if is_error else 'text-bg-success' }}" role="alert">
+            <div class="d-flex">
+                <div class="toast-body fw-semibold">
+                    <i class="fas {{ 'fa-circle-exclamation' if is_error else 'fa-check-circle' }} me-2"></i>{{ toast_msg }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
         </div>
-      </div>
     </div>
-    <script>
-      (function () {
-        var el = document.getElementById('appToast');
-        if (el) new bootstrap.Toast(el, { delay: 3500 }).show();
-      })();
-    </script>
     {% endif %}
+
+    <script src="/static/vendor/js/bootstrap.bundle.min.js"></script>
+    {% block vendor_scripts %}{% endblock %}
+    <script src="/static/js/app.js"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -1,33 +1,37 @@
 import os
+
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 from models import Base
 
-# Read database URL from environment (Render provides DATABASE_URL)
-DB_DIR = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), "LMS")
-os.makedirs(DB_DIR, exist_ok=True)
-DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{os.path.join(DB_DIR, 'lms.db')}")
+load_dotenv()
 
-# Some platforms (Heroku, Render) provide a DATABASE_URL that starts with
-# "postgres://". SQLAlchemy expects "postgresql://" for the psycopg driver,
-# so replace the scheme if necessary.
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL is not set. Use your Neon connection string, "
+        "or sqlite:///lms.db for local development."
+    )
+# SQLAlchemy only accepts the "postgresql://" scheme.
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# Create engine. SQLite needs the check_same_thread connect arg.
 if DATABASE_URL.startswith("sqlite"):
     engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 else:
-    engine = create_engine(DATABASE_URL)
+    # Neon suspends idle compute and drops its connections, so pooled
+    # connections must be checked before use and recycled regularly.
+    engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=300, pool_size=5, max_overflow=5)
 
-# Create session maker
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Create tables
+
 def create_tables():
     Base.metadata.create_all(bind=engine)
 
-# Dependency to get database session
+
 def get_db():
     db = SessionLocal()
     try:

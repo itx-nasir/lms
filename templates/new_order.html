@@ -1,0 +1,441 @@
+{% extends "base.html" %}
+
+{% block title %}New Order{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <a href="/orders" class="back-link"><i class="fas fa-arrow-left me-1"></i>All orders</a>
+        <h1 class="page-title"><i class="fas fa-flask"></i>New Order</h1>
+        <p class="page-subtitle">Choose the patient, tick the tests, then press <strong>Place Order</strong>.</p>
+    </div>
+</div>
+
+<form method="post" action="/orders" id="orderForm" autocomplete="off" novalidate>
+    <div id="selectionInputs"></div>
+    <div class="row g-4">
+        <div class="col-lg-8">
+
+            <!-- Step 1: patient -->
+            <section class="card step-card mb-4">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div>
+                        <h2 class="step-title">Patient</h2>
+                        <div class="step-subtitle">Search by name or phone number</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <input type="hidden" name="patient_id" id="patientId">
+                    <div class="d-flex gap-2 align-items-start flex-wrap flex-sm-nowrap">
+                        <div class="patient-picker flex-grow-1" id="patientPicker">
+                            <i class="fas fa-search picker-icon"></i>
+                            <input type="text" class="form-control form-control-lg" id="patientSearch"
+                                   placeholder="Type patient name or phone…" role="combobox" aria-expanded="false">
+                            <button type="button" class="picker-clear" id="patientClear" title="Change patient">
+                                <i class="fas fa-xmark"></i>
+                            </button>
+                            <div class="picker-list" id="patientList" role="listbox"></div>
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-lg text-nowrap" id="addPatientBtn"
+                                data-bs-toggle="modal" data-bs-target="#patientModal">
+                            <i class="fas fa-user-plus me-1"></i>New patient
+                        </button>
+                    </div>
+                    <div class="invalid-feedback d-block mt-2 d-none" id="patientError">
+                        <i class="fas fa-circle-exclamation me-1"></i>Please choose a patient first.
+                    </div>
+
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-6">
+                            <label class="form-label" for="referredBy">Referred by <span class="optional">(optional)</span></label>
+                            <input type="text" class="form-control" id="referredBy" name="referred_by" placeholder="e.g. Dr. Ahmed">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="sampleCollectedAt">Sample collected at <span class="optional">(optional)</span></label>
+                            <input type="datetime-local" class="form-control" id="sampleCollectedAt" name="sample_collected_at">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 2: tests -->
+            <section class="card step-card">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div>
+                        <h2 class="step-title">Tests</h2>
+                        <div class="step-subtitle">Click a test group or a single test to add it</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="search-box search-box-lg mb-3">
+                        <i class="fas fa-search"></i>
+                        <input type="search" class="form-control" id="testSearch" placeholder='Search tests, e.g. "CBC" or "Sugar"'>
+                    </div>
+                    <div class="cat-scroll mb-4" id="categoryTabs"></div>
+
+                    <div id="panelSection" class="mb-4">
+                        <h3 class="section-hdr"><i class="fas fa-layer-group"></i>Test groups</h3>
+                        <div class="row g-3" id="panelGrid"></div>
+                    </div>
+                    <div id="soloSection">
+                        <h3 class="section-hdr"><i class="fas fa-vial"></i>Single tests</h3>
+                        <div class="row g-2" id="soloGrid"></div>
+                    </div>
+                    <div class="empty-state d-none" id="noResults">
+                        <i class="fas fa-magnifying-glass"></i>
+                        <div class="empty-title">No tests found</div>
+                        <div class="empty-text">Try another word or <a href="#" id="clearTestSearch">clear the search</a>.</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Summary (sticky on desktop) -->
+        <div class="col-lg-4 summary-col">
+            <aside class="summary-panel">
+                <div class="summary-head"><i class="fas fa-receipt me-2"></i>Order summary</div>
+                <div class="summary-patient" id="summaryPatient">
+                    <i class="fas fa-user-circle"></i><span class="text-muted">No patient chosen</span>
+                </div>
+                <div class="summary-list" id="summaryList"></div>
+                <div class="summary-total">
+                    <div><span id="summaryCount">0</span> tests</div>
+                    <div class="summary-amount">PKR <span id="summaryAmount">0</span></div>
+                </div>
+                <div class="p-3 pt-0">
+                    <button type="submit" class="btn btn-success btn-lg w-100 btn-place-order" id="placeOrderBtn">
+                        <i class="fas fa-check-circle me-2"></i>Place Order
+                    </button>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Mobile bottom bar -->
+    <div class="mobile-order-bar d-lg-none">
+        <div><strong id="mobileCount">0</strong> tests · <strong>PKR <span id="mobileAmount">0</span></strong></div>
+        <button type="submit" class="btn btn-success"><i class="fas fa-check-circle me-1"></i>Place Order</button>
+    </div>
+</form>
+
+{% include "_patient_modal.html" %}
+<script id="catalogData" type="application/json">{{ catalog|tojson }}</script>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    var DATA = JSON.parse(document.getElementById('catalogData').textContent);
+    var PATIENTS = DATA.patients, PANELS = DATA.panels, TESTS = DATA.tests;
+    var selPanels = new Set(), selTests = new Set();
+    var activeCat = '', query = '';
+
+    // [keyword in category name, colour, icon]
+    var CATEGORY_STYLES = [
+        ['haemat', '#dc2626', 'fa-droplet'], ['hemat', '#dc2626', 'fa-droplet'],
+        ['biochem', '#2563eb', 'fa-flask'], ['microbio', '#16a34a', 'fa-bacterium'],
+        ['serolog', '#9333ea', 'fa-shield-virus'], ['immun', '#9333ea', 'fa-shield-virus'],
+        ['hormon', '#ea580c', 'fa-dna'], ['urin', '#ca8a04', 'fa-vial'], ['stool', '#92400e', 'fa-microscope']
+    ];
+    function catStyle(c) {
+        var name = String(c || '').toLowerCase();
+        return CATEGORY_STYLES.filter(function (s) { return name.indexOf(s[0]) !== -1; })[0] || [null, '#64748b', 'fa-vials'];
+    }
+    function catColor(c) { return catStyle(c)[1]; }
+    function catIcon(c) { return catStyle(c)[2]; }
+    function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+    function money(n) { return Number(n || 0).toLocaleString('en-PK', { maximumFractionDigits: 0 }); }
+    function $(id) { return document.getElementById(id); }
+
+    // ── Patient picker ────────────────────────────────────────────────────
+    var picker = $('patientPicker'), pInput = $('patientSearch'), pList = $('patientList'), pId = $('patientId');
+    var matches = [], active = 0;
+
+    function patientMeta(p) { return p.age + ' yrs · ' + p.gender + ' · ' + p.phone; }
+
+    function openList() {
+        var q = pInput.value.toLowerCase().trim(), digits = q.replace(/\D/g, '');
+        matches = PATIENTS.filter(function (p) {
+            return !q || p.name.toLowerCase().indexOf(q) !== -1 ||
+                (digits.length > 2 && p.phone.replace(/\D/g, '').indexOf(digits) !== -1);
+        }).slice(0, 50);
+        active = 0;
+        pList.innerHTML = matches.length
+            ? matches.map(function (p, i) {
+                return '<button type="button" class="picker-item' + (i === 0 ? ' active' : '') + '" data-index="' + i + '">' +
+                    '<span class="picker-name">' + esc(p.name) + '</span><span class="picker-meta">' + esc(patientMeta(p)) + '</span></button>';
+            }).join('')
+            : '<div class="picker-empty">No patient found. <a href="#" data-add-new>Add "' + esc(pInput.value.trim()) + '" as a new patient</a></div>';
+        picker.classList.add('open');
+        pInput.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeList() {
+        picker.classList.remove('open');
+        pInput.setAttribute('aria-expanded', 'false');
+    }
+
+    function setActive(i) {
+        var items = pList.querySelectorAll('.picker-item');
+        if (!items.length) return;
+        active = (i + items.length) % items.length;
+        items.forEach(function (el, j) { el.classList.toggle('active', j === active); });
+        items[active].scrollIntoView({ block: 'nearest' });
+    }
+
+    function selectPatient(p) {
+        pId.value = p.id;
+        pInput.value = p.name + '  ·  ' + patientMeta(p);
+        picker.classList.add('has-value');
+        $('patientError').classList.add('d-none');
+        $('summaryPatient').innerHTML = '<i class="fas fa-user-circle text-primary"></i><div><strong>' + esc(p.name) +
+            '</strong><div class="small text-muted">' + esc(patientMeta(p)) + '</div></div>';
+        closeList();
+    }
+
+    function clearPatient() {
+        pId.value = '';
+        pInput.value = '';
+        picker.classList.remove('has-value');
+        $('summaryPatient').innerHTML = '<i class="fas fa-user-circle"></i><span class="text-muted">No patient chosen</span>';
+        pInput.focus();
+        openList();
+    }
+
+    pInput.addEventListener('focus', function () { if (!pId.value) openList(); });
+    pInput.addEventListener('click', function () { if (pId.value) pInput.select(); openList(); });
+    pInput.addEventListener('input', function () {
+        if (pId.value) { pId.value = ''; picker.classList.remove('has-value'); }
+        openList();
+    });
+    pInput.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown') { e.preventDefault(); if (!picker.classList.contains('open')) openList(); else setActive(active + 1); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(active - 1); }
+        else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (picker.classList.contains('open') && matches[active]) selectPatient(matches[active]);
+        } else if (e.key === 'Escape') closeList();
+    });
+    pInput.addEventListener('blur', function () { setTimeout(closeList, 150); });
+    pList.addEventListener('mousedown', function (e) { e.preventDefault(); });
+    pList.addEventListener('click', function (e) {
+        var item = e.target.closest('.picker-item');
+        if (item) selectPatient(matches[+item.dataset.index]);
+        if (e.target.closest('[data-add-new]')) { e.preventDefault(); $('addPatientBtn').click(); }
+    });
+    $('patientClear').addEventListener('click', clearPatient);
+
+    // Quick-add patient (same modal as the Patients page, saved via the API)
+    var modalEl = $('patientModal'), modalForm = modalEl.querySelector('form'), modalError = modalEl.querySelector('[data-modal-error]');
+    modalEl.addEventListener('show.bs.modal', function () {
+        modalForm.reset();
+        modalError.classList.add('d-none');
+        if (!pId.value) modalForm.querySelector('[name="name"]').value = pInput.value.trim();
+    });
+    modalEl.addEventListener('shown.bs.modal', function () {
+        var name = modalForm.querySelector('[name="name"]');
+        (name.value ? modalForm.querySelector('[name="age"]') : name).focus();
+    });
+    modalForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var btn = modalForm.querySelector('[type="submit"]');
+        btn.disabled = true;
+        fetch('/api/patients', { method: 'POST', body: new FormData(modalForm) })
+            .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+            .then(function (p) {
+                PATIENTS.unshift(p);
+                selectPatient(p);
+                bootstrap.Modal.getInstance(modalEl).hide();
+                $('testSearch').focus();
+            })
+            .catch(function () {
+                modalError.textContent = 'Could not save the patient. Please check the details and try again.';
+                modalError.classList.remove('d-none');
+            })
+            .finally(function () { btn.disabled = false; });
+    });
+
+    // ── Test catalog ──────────────────────────────────────────────────────
+    var CATS = Array.from(new Set(PANELS.map(function (p) { return p.category; }).concat(TESTS.map(function (t) { return t.category; })))).filter(Boolean).sort();
+
+    function renderCategories() {
+        var counts = { '': PANELS.length + TESTS.length };
+        PANELS.concat(TESTS).forEach(function (x) { counts[x.category] = (counts[x.category] || 0) + 1; });
+        $('categoryTabs').innerHTML = [''].concat(CATS).map(function (c) {
+            return '<button type="button" class="cat-pill' + (c === activeCat ? ' active' : '') + '" data-cat="' + esc(c) + '">' +
+                esc(c || 'All') + ' <span class="cat-pill-count">' + counts[c] + '</span></button>';
+        }).join('');
+    }
+
+    function panelVisible(p) {
+        if (activeCat && p.category !== activeCat) return false;
+        return !query || p.name.toLowerCase().indexOf(query) !== -1 ||
+            p.tests.some(function (t) { return t.toLowerCase().indexOf(query) !== -1; });
+    }
+    function testVisible(t) {
+        if (activeCat && t.category !== activeCat) return false;
+        return !query || t.name.toLowerCase().indexOf(query) !== -1;
+    }
+
+    function renderCatalog() {
+        var panels = PANELS.filter(panelVisible), tests = TESTS.filter(testVisible);
+        $('panelGrid').innerHTML = panels.map(function (p) {
+            var color = catColor(p.category);
+            return '<div class="col-sm-6 col-xl-4"><div class="pcard" tabindex="0" role="checkbox" data-panel="' + p.id + '" style="--pcolor:' + color + '">' +
+                '<div class="pcard-top"><span class="pcard-icon"><i class="fas ' + catIcon(p.category) + '"></i></span>' +
+                '<i class="fas fa-circle-check pcard-check"></i></div>' +
+                '<div class="pcard-name">' + esc(p.name) + '</div>' +
+                '<div class="pcard-meta"><span>' + p.tests.length + ' test' + (p.tests.length !== 1 ? 's' : '') + '</span>' +
+                (p.price > 0 ? '<span class="pcard-price">PKR ' + money(p.price) + '</span>' : '') + '</div>' +
+                (p.tests.length ? '<button type="button" class="pcard-toggle">Show tests <i class="fas fa-chevron-down"></i></button>' +
+                    '<div class="pcard-tests">' + p.tests.map(function (t) { return '<span>' + esc(t) + '</span>'; }).join('') + '</div>' : '') +
+                '</div></div>';
+        }).join('');
+        $('soloGrid').innerHTML = tests.map(function (t) {
+            return '<div class="col-6 col-md-4 col-xl-3"><div class="tpill" tabindex="0" role="checkbox" data-test="' + t.id + '">' +
+                '<i class="fas fa-circle-check tpill-check"></i><span class="tpill-body"><span class="tpill-name">' + esc(t.name) + '</span>' +
+                (t.price > 0 ? '<span class="tpill-price">PKR ' + money(t.price) + '</span>' : '') + '</span></div></div>';
+        }).join('');
+        $('panelSection').classList.toggle('d-none', !panels.length);
+        $('soloSection').classList.toggle('d-none', !tests.length);
+        $('noResults').classList.toggle('d-none', panels.length + tests.length > 0);
+        syncCards();
+    }
+
+    function syncCards() {
+        document.querySelectorAll('[data-panel]').forEach(function (el) {
+            var on = selPanels.has(+el.dataset.panel);
+            el.classList.toggle('selected', on);
+            el.setAttribute('aria-checked', on);
+        });
+        document.querySelectorAll('[data-test]').forEach(function (el) {
+            var on = selTests.has(+el.dataset.test);
+            el.classList.toggle('selected', on);
+            el.setAttribute('aria-checked', on);
+        });
+    }
+
+    function toggle(set, id) {
+        if (set.has(id)) set.delete(id); else set.add(id);
+        syncCards();
+        renderSummary();
+    }
+
+    function onCatalogActivate(e) {
+        var toggleBtn = e.target.closest('.pcard-toggle');
+        if (toggleBtn) {
+            var card = toggleBtn.closest('.pcard');
+            card.classList.toggle('expanded');
+            toggleBtn.innerHTML = card.classList.contains('expanded') ? 'Hide tests <i class="fas fa-chevron-up"></i>' : 'Show tests <i class="fas fa-chevron-down"></i>';
+            return;
+        }
+        var panel = e.target.closest('[data-panel]');
+        if (panel) return toggle(selPanels, +panel.dataset.panel);
+        var test = e.target.closest('[data-test]');
+        if (test) toggle(selTests, +test.dataset.test);
+    }
+    ['panelGrid', 'soloGrid'].forEach(function (id) {
+        $(id).addEventListener('click', onCatalogActivate);
+        $(id).addEventListener('keydown', function (e) {
+            if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-panel], [data-test]')) {
+                e.preventDefault();
+                onCatalogActivate(e);
+            }
+        });
+    });
+
+    $('categoryTabs').addEventListener('click', function (e) {
+        var pill = e.target.closest('[data-cat]');
+        if (!pill) return;
+        activeCat = pill.dataset.cat;
+        renderCategories();
+        renderCatalog();
+    });
+    $('testSearch').addEventListener('input', function () {
+        query = this.value.toLowerCase().trim();
+        renderCatalog();
+    });
+    $('clearTestSearch').addEventListener('click', function (e) {
+        e.preventDefault();
+        $('testSearch').value = '';
+        query = '';
+        activeCat = '';
+        renderCategories();
+        renderCatalog();
+        $('testSearch').focus();
+    });
+
+    // ── Summary ───────────────────────────────────────────────────────────
+    function renderSummary() {
+        var panels = PANELS.filter(function (p) { return selPanels.has(p.id); });
+        var tests = TESTS.filter(function (t) { return selTests.has(t.id); });
+        var count = panels.reduce(function (n, p) { return n + p.tests.length; }, 0) + tests.length;
+        var total = panels.concat(tests).reduce(function (s, x) { return s + x.price; }, 0);
+
+        $('summaryList').innerHTML = panels.length + tests.length === 0
+            ? '<div class="summary-empty"><i class="fas fa-hand-pointer"></i>Nothing selected yet.<br>Click tests on the left to add them.</div>'
+            : panels.map(function (p) {
+                return '<div class="sum-row"><span class="sum-dot" style="background:' + catColor(p.category) + '"></span>' +
+                    '<span class="sum-name"><strong>' + esc(p.name) + '</strong> <small class="text-muted">' + p.tests.length + ' tests</small></span>' +
+                    '<span class="sum-price">' + money(p.price) + '</span>' +
+                    '<button type="button" class="sum-remove" data-remove-panel="' + p.id + '" title="Remove"><i class="fas fa-xmark"></i></button></div>';
+            }).join('') + tests.map(function (t) {
+                return '<div class="sum-row"><span class="sum-dot"></span><span class="sum-name">' + esc(t.name) + '</span>' +
+                    '<span class="sum-price">' + money(t.price) + '</span>' +
+                    '<button type="button" class="sum-remove" data-remove-test="' + t.id + '" title="Remove"><i class="fas fa-xmark"></i></button></div>';
+            }).join('');
+
+        $('summaryCount').textContent = $('mobileCount').textContent = count;
+        $('summaryAmount').textContent = $('mobileAmount').textContent = money(total);
+        $('selectionInputs').innerHTML =
+            Array.from(selPanels).map(function (id) { return '<input type="hidden" name="panel_ids" value="' + id + '">'; }).join('') +
+            Array.from(selTests).map(function (id) { return '<input type="hidden" name="test_ids" value="' + id + '">'; }).join('');
+    }
+
+    $('summaryList').addEventListener('click', function (e) {
+        var btn = e.target.closest('.sum-remove');
+        if (!btn) return;
+        if (btn.dataset.removePanel) toggle(selPanels, +btn.dataset.removePanel);
+        else toggle(selTests, +btn.dataset.removeTest);
+    });
+
+    // ── Submit ────────────────────────────────────────────────────────────
+    var form = $('orderForm');
+    form.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && e.target.tagName === 'INPUT') e.preventDefault();
+    });
+    form.addEventListener('submit', function (e) {
+        if (!pId.value) {
+            e.preventDefault();
+            $('patientError').classList.remove('d-none');
+            pInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            pInput.focus();
+            return;
+        }
+        if (!selPanels.size && !selTests.size) {
+            e.preventDefault();
+            alert('Please select at least one test.');
+            $('testSearch').focus();
+        }
+    });
+
+    renderCategories();
+    renderCatalog();
+    renderSummary();
+
+    var preselected = PATIENTS.filter(function (p) { return p.id === DATA.selectedPatientId; })[0];
+    if (preselected) { selectPatient(preselected); $('testSearch').focus({ preventScroll: true }); }
+    else if (!PANELS.length && !TESTS.length) {
+        $('noResults').classList.remove('d-none');
+        $('noResults').innerHTML = '<i class="fas fa-vials"></i><div class="empty-title">No tests in the catalog yet</div>' +
+            '<div class="empty-text">Add tests on the <a href="/tests">Tests &amp; Prices</a> page first.</div>';
+    }
+})();
+</script>
+{% endblock %}
