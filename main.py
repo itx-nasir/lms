@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from typing import Optional
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, Form, HTTPException, Request
@@ -14,7 +14,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 import crud
 from auth import create_access_token, verify_password, verify_token
 from database import SessionLocal, create_tables, get_db
-from helpers import group_order_items, money, result_flag
+from helpers import group_order_items, money, result_flag, whatsapp_number
 from schemas import CategoryIn, OrderIn, PanelIn, PatientIn, TestIn
 
 load_dotenv()
@@ -344,7 +344,23 @@ async def report_page(request: Request, order_id: int, user: str = Depends(get_c
     order = get_order_or_404(db, order_id)
     if order.status != "completed":
         return redirect(f"/orders/{order_id}", error="Enter the results and complete this order to see its report.")
-    return render(request, "report_detail.html", user=user, order=order)
+
+    whatsapp_url = None
+    phone = whatsapp_number(order.patient.phone)
+    if phone:
+        link = crud.get_or_create_share_link(db, order)
+        report_url = str(request.url_for("shared_report", token=link.token))
+        message = f"Hello! Your lab report from Khalid Medical Laboratory is ready: {report_url}"
+        whatsapp_url = f"https://wa.me/{phone}?text={quote(message, safe='')}"
+    return render(request, "report_detail.html", user=user, order=order, whatsapp_url=whatsapp_url)
+
+
+@app.get("/r/{token}", response_class=HTMLResponse, name="shared_report")
+async def shared_report_page(request: Request, token: str, db: Session = Depends(get_db)):
+    order = crud.get_order_by_share_token(db, token)
+    if not order or order.status != "completed":
+        raise HTTPException(status_code=404, detail="This report link is invalid or has expired. Please contact the laboratory.")
+    return render(request, "report_detail.html", user=None, order=order, public=True)
 
 
 if __name__ == "__main__":
