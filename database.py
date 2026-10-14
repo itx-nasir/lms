@@ -4,7 +4,9 @@ from sqlalchemy.orm import sessionmaker
 from models import Base
 
 # Read database URL from environment (Render provides DATABASE_URL)
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./lms.db")
+DB_DIR = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), "LMS")
+os.makedirs(DB_DIR, exist_ok=True)
+DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{os.path.join(DB_DIR, 'lms.db')}")
 
 # Some platforms (Heroku, Render) provide a DATABASE_URL that starts with
 # "postgres://". SQLAlchemy expects "postgresql://" for the psycopg driver,
