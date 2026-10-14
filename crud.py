@@ -1,86 +1,77 @@
-from datetime import datetime
+from datetime import datetime, time
+from typing import Optional
 
+from sqlalchemy import case, func
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import or_, func, case
-from models import (
-    Patient, Test, TestCategory, TestOrder, TestOrderItem, AdminUser,
-    Panel, PanelTest, PanelOrder,
-)
-from schemas import (
-    PatientCreate, PatientUpdate, TestCreate, TestUpdate, TestCategoryCreate,
-    TestOrderCreate, TestOrderItemUpdate, PanelCreate, PanelUpdate,
-)
+
 from auth import get_password_hash
-from typing import List, Optional
+from models import (
+    AdminUser, Panel, PanelOrder, PanelTest, Patient, Test, TestCategory,
+    TestOrder, TestOrderItem,
+)
+from schemas import CategoryIn, OrderIn, PanelIn, PatientIn, TestIn
 
-# Admin User CRUD
-def create_admin_user(db: Session, username: str, password: str):
-    hashed_password = get_password_hash(password)
-    db_admin = AdminUser(username=username, hashed_password=hashed_password)
-    db.add(db_admin)
-    db.commit()
-    db.refresh(db_admin)
-    return db_admin
 
+class InUseError(Exception):
+    """Raised when deleting a record that existing orders still reference."""
+
+
+# ── Admin users ──────────────────────────────────────────────────────────────
 def get_admin_user(db: Session, username: str):
     return db.query(AdminUser).filter(AdminUser.username == username).first()
 
-# Patient CRUD
-def get_patients(db: Session, skip: int = 0, limit: int = 500, search: str = None):
-    query = db.query(Patient)
-    if search:
-        query = query.filter(or_(
-            Patient.name.contains(search),
-            Patient.phone.contains(search)
-        ))
-    return query.order_by(Patient.id.desc()).offset(skip).limit(limit).all()
 
-def get_patient(db: Session, patient_id: int):
-    return db.query(Patient).filter(Patient.id == patient_id).first()
-
-def create_patient(db: Session, patient: PatientCreate):
-    db_patient = Patient(**patient.dict())
-    db.add(db_patient)
+def create_admin_user(db: Session, username: str, password: str):
+    admin = AdminUser(username=username, hashed_password=get_password_hash(password))
+    db.add(admin)
     db.commit()
-    db.refresh(db_patient)
-    return db_patient
+    return admin
 
-def update_patient(db: Session, patient_id: int, patient_update: PatientUpdate):
-    db_patient = db.query(Patient).filter(Patient.id == patient_id).first()
-    if db_patient:
-        for key, value in patient_update.dict(exclude_unset=True).items():
-            setattr(db_patient, key, value)
+
+# ── Patients ─────────────────────────────────────────────────────────────────
+def get_patients(db: Session):
+    return db.query(Patient).order_by(Patient.id.desc()).all()
+
+
+def create_patient(db: Session, data: PatientIn):
+    patient = Patient(**data.model_dump())
+    db.add(patient)
+    db.commit()
+    db.refresh(patient)
+    return patient
+
+
+def update_patient(db: Session, patient_id: int, data: PatientIn):
+    patient = db.get(Patient, patient_id)
+    if patient:
+        for key, value in data.model_dump().items():
+            setattr(patient, key, value)
         db.commit()
-        db.refresh(db_patient)
-    return db_patient
+    return patient
+
 
 def delete_patient(db: Session, patient_id: int):
-    db_patient = db.query(Patient).filter(Patient.id == patient_id).first()
-    if db_patient:
-        db.delete(db_patient)
-        db.commit()
-    return db_patient
+    patient = db.get(Patient, patient_id)
+    if not patient:
+        return
+    if patient.orders:
+        raise InUseError(f"{patient.name} has {len(patient.orders)} order(s) and cannot be deleted.")
+    db.delete(patient)
+    db.commit()
 
-# Test Category CRUD
+
+# ── Test catalog ─────────────────────────────────────────────────────────────
 def get_test_categories(db: Session):
     return db.query(TestCategory).order_by(TestCategory.name).all()
 
-def create_test_category(db: Session, category: TestCategoryCreate):
-    db_category = TestCategory(**category.dict())
-    db.add(db_category)
-    db.commit()
-    db.refresh(db_category)
-    return db_category
 
-# Test CRUD
-def get_tests(db: Session, category_id: Optional[int] = None):
-    query = db.query(Test).options(joinedload(Test.category), joinedload(Test.panel_links).joinedload(PanelTest.panel))
-    if category_id:
-        query = query.filter(Test.category_id == category_id)
-    return query.order_by(Test.name).all()
+def create_test_category(db: Session, data: CategoryIn):
+    db.add(TestCategory(**data.model_dump()))
+    db.commit()
+
 
 def get_standalone_tests(db: Session):
-    """Tests that are not part of any panel - orderable individually."""
+    """Tests that are not part of any panel, i.e. orderable individually."""
     linked_test_ids = db.query(PanelTest.test_id)
     return (
         db.query(Test)
@@ -90,49 +81,44 @@ def get_standalone_tests(db: Session):
         .all()
     )
 
-def get_test(db: Session, test_id: int):
-    return db.query(Test).options(joinedload(Test.category), joinedload(Test.panel_links)).filter(Test.id == test_id).first()
 
 def _set_test_panel(db: Session, test_id: int, panel_id: Optional[int]):
-    """Ensure a test belongs to at most one panel - clear any existing link
-    then (optionally) create the new one."""
+    """A test belongs to at most one panel: drop any existing link, then relink."""
     db.query(PanelTest).filter(PanelTest.test_id == test_id).delete()
     if panel_id:
         sequence = db.query(PanelTest).filter(PanelTest.panel_id == panel_id).count()
         db.add(PanelTest(panel_id=panel_id, test_id=test_id, sequence=sequence))
 
-def create_test(db: Session, test: TestCreate):
-    data = test.dict(exclude={"panel_id"})
-    db_test = Test(**data)
-    db.add(db_test)
-    db.commit()
-    db.refresh(db_test)
-    if test.panel_id:
-        _set_test_panel(db, db_test.id, test.panel_id)
-        db.commit()
-    return db_test
 
-def update_test(db: Session, test_id: int, test_update: TestUpdate):
-    db_test = db.query(Test).filter(Test.id == test_id).first()
-    if db_test:
-        data = test_update.dict(exclude_unset=True, exclude={"panel_id"})
-        for key, value in data.items():
-            setattr(db_test, key, value)
+def create_test(db: Session, data: TestIn):
+    test = Test(**data.model_dump(exclude={"panel_id"}))
+    db.add(test)
+    db.flush()
+    _set_test_panel(db, test.id, data.panel_id)
+    db.commit()
+
+
+def update_test(db: Session, test_id: int, data: TestIn):
+    test = db.get(Test, test_id)
+    if test:
+        for key, value in data.model_dump(exclude={"panel_id"}).items():
+            setattr(test, key, value)
+        current_panel_id = test.panel_links[0].panel_id if test.panel_links else None
+        if current_panel_id != data.panel_id:
+            _set_test_panel(db, test_id, data.panel_id)
         db.commit()
-        if "panel_id" in test_update.dict(exclude_unset=True):
-            _set_test_panel(db, test_id, test_update.panel_id)
-            db.commit()
-        db.refresh(db_test)
-    return db_test
+
 
 def delete_test(db: Session, test_id: int):
-    db_test = db.query(Test).filter(Test.id == test_id).first()
-    if db_test:
-        db.delete(db_test)
-        db.commit()
-    return db_test
+    test = db.get(Test, test_id)
+    if not test:
+        return
+    if test.order_items:
+        raise InUseError(f'"{test.name}" is used in existing orders and cannot be deleted.')
+    db.delete(test)
+    db.commit()
 
-# Panel CRUD
+
 def get_panels(db: Session):
     return (
         db.query(Panel)
@@ -141,44 +127,38 @@ def get_panels(db: Session):
         .all()
     )
 
-def get_panel(db: Session, panel_id: int):
-    return (
-        db.query(Panel)
-        .options(joinedload(Panel.panel_tests).joinedload(PanelTest.test))
-        .filter(Panel.id == panel_id)
-        .first()
-    )
 
-def create_panel(db: Session, panel: PanelCreate):
-    db_panel = Panel(**panel.dict())
-    db.add(db_panel)
+def create_panel(db: Session, data: PanelIn):
+    db.add(Panel(**data.model_dump()))
     db.commit()
-    db.refresh(db_panel)
-    return db_panel
 
-def update_panel(db: Session, panel_id: int, panel_update: PanelUpdate):
-    db_panel = db.query(Panel).filter(Panel.id == panel_id).first()
-    if db_panel:
-        for key, value in panel_update.dict(exclude_unset=True).items():
-            setattr(db_panel, key, value)
+
+def update_panel(db: Session, panel_id: int, data: PanelIn):
+    panel = db.get(Panel, panel_id)
+    if panel:
+        for key, value in data.model_dump().items():
+            setattr(panel, key, value)
         db.commit()
-        db.refresh(db_panel)
-    return db_panel
+
 
 def delete_panel(db: Session, panel_id: int):
-    """Delete a panel. Member tests are kept, just unlinked (become standalone)."""
-    db_panel = db.query(Panel).filter(Panel.id == panel_id).first()
-    if db_panel:
-        db.delete(db_panel)
-        db.commit()
-    return db_panel
+    """Delete a panel. Its member tests are kept and become individual tests."""
+    panel = db.get(Panel, panel_id)
+    if not panel:
+        return
+    if panel.panel_orders:
+        raise InUseError(f'"{panel.name}" is used in existing orders and cannot be deleted.')
+    db.delete(panel)
+    db.commit()
 
-# Test Order CRUD
-def get_orders(db: Session, skip: int = 0, limit: int = 500, status: Optional[str] = None):
+
+# ── Orders ───────────────────────────────────────────────────────────────────
+def get_orders(db: Session, status: Optional[str] = None, limit: Optional[int] = None):
     query = db.query(TestOrder).options(joinedload(TestOrder.patient))
     if status:
         query = query.filter(TestOrder.status == status)
-    return query.order_by(TestOrder.id.desc()).offset(skip).limit(limit).all()
+    return query.order_by(TestOrder.id.desc()).limit(limit).all()
+
 
 def get_order(db: Session, order_id: int):
     return (
@@ -192,120 +172,79 @@ def get_order(db: Session, order_id: int):
         .first()
     )
 
-def create_order(db: Session, order: TestOrderCreate):
-    panel_ids = list(dict.fromkeys(order.panel_ids or []))
-    test_ids = list(dict.fromkeys(order.test_ids or []))
 
-    panels = db.query(Panel).options(
-        joinedload(Panel.panel_tests).joinedload(PanelTest.test)
-    ).filter(Panel.id.in_(panel_ids)).all() if panel_ids else []
+def create_order(db: Session, data: OrderIn):
+    panel_ids = list(dict.fromkeys(data.panel_ids))
+    test_ids = list(dict.fromkeys(data.test_ids))
 
-    standalone_tests = db.query(Test).filter(Test.id.in_(test_ids)).all() if test_ids else []
+    panels = (
+        db.query(Panel).options(joinedload(Panel.panel_tests).joinedload(PanelTest.test))
+        .filter(Panel.id.in_(panel_ids)).all()
+    ) if panel_ids else []
+    tests = db.query(Test).filter(Test.id.in_(test_ids)).all() if test_ids else []
 
-    total_amount = sum(p.price for p in panels) + sum(t.price for t in standalone_tests)
-
-    db_order = TestOrder(
-        patient_id=order.patient_id,
-        total_amount=total_amount,
-        status=order.status,
-        referred_by=order.referred_by,
-        sample_collected_at=order.sample_collected_at,
+    order = TestOrder(
+        patient_id=data.patient_id,
+        total_amount=sum(p.price for p in panels) + sum(t.price for t in tests),
+        referred_by=data.referred_by,
+        sample_collected_at=data.sample_collected_at,
     )
-    db.add(db_order)
-    db.flush()  # get order.id
+    db.add(order)
+    db.flush()
 
     for panel in panels:
-        panel_order = PanelOrder(order_id=db_order.id, panel_id=panel.id, price=panel.price)
+        panel_order = PanelOrder(order_id=order.id, panel_id=panel.id, price=panel.price)
         db.add(panel_order)
-        db.flush()  # get panel_order.id
+        db.flush()
         for pt in panel.panel_tests:
             db.add(TestOrderItem(
-                order_id=db_order.id,
-                test_id=pt.test_id,
-                unit_price=pt.test.price,
-                panel_order_id=panel_order.id,
+                order_id=order.id, test_id=pt.test_id,
+                unit_price=pt.test.price, panel_order_id=panel_order.id,
             ))
 
-    for test in standalone_tests:
-        db.add(TestOrderItem(
-            order_id=db_order.id,
-            test_id=test.id,
-            unit_price=test.price,
-            panel_order_id=None,
-        ))
+    for test in tests:
+        db.add(TestOrderItem(order_id=order.id, test_id=test.id, unit_price=test.price))
 
     db.commit()
-    db.refresh(db_order)
-    return db_order
+    return order
 
-def update_order_status(db: Session, order_id: int, status: str):
-    db_order = db.query(TestOrder).filter(TestOrder.id == order_id).first()
-    if db_order:
-        db_order.status = status
-        if status == "completed" and not db_order.reported_at:
-            db_order.reported_at = datetime.utcnow()
-        if not db_order.sample_collected_at:
-            db_order.sample_collected_at = db_order.ordered_at
-        db.commit()
-        db.refresh(db_order)
-    return db_order
 
-def update_order_item_result(db: Session, item_id: int, result_update: TestOrderItemUpdate):
-    db_item = db.query(TestOrderItem).filter(TestOrderItem.id == item_id).first()
-    if db_item:
-        if result_update.result_value is not None:
-            db_item.result_value = result_update.result_value
-        if result_update.result_notes is not None:
-            db_item.result_notes = result_update.result_notes
-        db.commit()
-        db.refresh(db_item)
-    return db_item
-
-def delete_order(db: Session, order_id: int):
-    db_order = db.query(TestOrder).filter(TestOrder.id == order_id).first()
-    if db_order:
-        db.delete(db_order)  # cascades to items + panel_orders
-        db.commit()
-    return True
-
-def group_order_items(order):
-    """Group an order's line items by the panel they were ordered as part
-    of (e.g. all CBC/CP parameters together), with any individually-ordered
-    tests collected into a final "Other Tests" group. Used to render
-    order/report pages in a clean, grouped way instead of one long list."""
-    groups = []
-    panel_groups = {}
-    other_items = []
-
+def save_results(db: Session, order: TestOrder, form) -> None:
+    """Store result/notes fields named result_value_<item id> / result_notes_<item id>.
+    Blank fields clear any previously stored value."""
     for item in order.items:
-        if item.panel_order_id:
-            group = panel_groups.get(item.panel_order_id)
-            if not group:
-                group = {"label": item.panel_order.panel.name, "items": []}
-                panel_groups[item.panel_order_id] = group
-                groups.append(group)
-            group["items"].append(item)
-        else:
-            other_items.append(item)
+        value = form.get(f"result_value_{item.id}")
+        if value is None:
+            continue
+        notes = form.get(f"result_notes_{item.id}") or ""
+        item.result_value = value.strip() or None
+        item.result_notes = notes.strip() or None
+    db.commit()
 
-    if other_items:
-        groups.append({"label": "Other Tests", "items": other_items})
 
-    return groups
+def complete_order(db: Session, order: TestOrder) -> None:
+    order.status = "completed"
+    order.reported_at = order.reported_at or datetime.now()
+    order.sample_collected_at = order.sample_collected_at or order.ordered_at
+    db.commit()
 
-# Dashboard stats
+
+def delete_order(db: Session, order: TestOrder) -> None:
+    db.delete(order)  # cascades to items and panel_orders
+    db.commit()
+
+
+# ── Dashboard ────────────────────────────────────────────────────────────────
 def get_dashboard_stats(db: Session):
-    total_patients = db.query(func.count(Patient.id)).scalar()
-
-    order_stats = db.query(
-        func.count(TestOrder.id).label("total"),
+    today_start = datetime.combine(datetime.now().date(), time.min)
+    stats = db.query(
+        func.count(case((TestOrder.ordered_at >= today_start, TestOrder.id))).label("today"),
         func.count(case((TestOrder.status == "pending", TestOrder.id))).label("pending"),
         func.count(case((TestOrder.status == "completed", TestOrder.id))).label("completed"),
     ).first()
-
     return {
-        "total_patients": total_patients,
-        "total_orders": order_stats.total,
-        "pending_orders": order_stats.pending,
-        "completed_orders": order_stats.completed,
+        "total_patients": db.query(func.count(Patient.id)).scalar(),
+        "today_orders": stats.today,
+        "pending_orders": stats.pending,
+        "completed_orders": stats.completed,
     }

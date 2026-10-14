@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_badge %}
+
+{% block title %}ORD-{{ order.id }} · {{ order.patient.name }}{% endblock %}
+
+{% block content %}
+{% set completed = order.status == 'completed' %}
+<div class="page-header">
+    <div>
+        <a href="/orders" class="back-link"><i class="fas fa-arrow-left me-1"></i>All orders</a>
+        <h1 class="page-title">{{ order.patient.name }} {{ status_badge(order.status) }}</h1>
+        <p class="page-subtitle">
+            Order ORD-{{ order.id }} · {{ order.ordered_at.strftime('%d %b %Y, %I:%M %p') }}
+        </p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="/orders/{{ order.id }}/invoice" class="btn btn-outline-secondary">
+            <i class="fas fa-receipt me-1"></i>Invoice
+        </a>
+        {% if completed %}
+        <a href="/reports/{{ order.id }}" class="btn btn-success"><i class="fas fa-file-medical me-1"></i>View report</a>
+        {% else %}
+        <form method="post" action="/orders/{{ order.id }}/delete">
+            <button type="submit" class="btn btn-outline-danger"
+                    data-confirm="Delete order ORD-{{ order.id }} for {{ order.patient.name }}? This cannot be undone.">
+                <i class="fas fa-trash me-1"></i>Delete
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="info-strip mb-4">
+    <div><span>Age / Gender</span>{{ order.patient.age }} yrs · {{ order.patient.gender }}</div>
+    <div><span>Phone</span>{{ order.patient.phone }}</div>
+    <div><span>Referred by</span>{{ order.referred_by or '—' }}</div>
+    <div><span>Sample collected</span>{{ (order.sample_collected_at or order.ordered_at).strftime('%d %b %Y, %I:%M %p') }}</div>
+    <div><span>Total</span><strong class="text-success">PKR {{ order.total_amount|money }}</strong></div>
+</div>
+
+<form method="post" action="/orders/{{ order.id }}/results" id="resultsForm" class="results-form" autocomplete="off">
+    <div class="card">
+        <div class="card-header results-header">
+            <div>
+                <h2 class="card-title-sm"><i class="fas fa-flask text-primary me-2"></i>{{ 'Edit results' if completed else 'Enter results' }}</h2>
+                <div class="text-muted small"><kbd>Enter</kbd> moves to the next test · <kbd>Shift</kbd>+<kbd>Enter</kbd> goes back</div>
+            </div>
+            <div class="results-progress">
+                <span data-progress-text></span>
+                <div class="progress"><div class="progress-bar bg-success" data-progress-bar></div></div>
+            </div>
+        </div>
+
+        {% for group in group_order_items(order) %}
+        <div class="result-group-title">
+            <i class="fas fa-layer-group"></i>{{ group.label }}
+            <span class="badge rounded-pill text-bg-light border ms-2">{{ group['items']|length }}</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table results-entry align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="col-test">Test</th>
+                        <th class="col-result">Result</th>
+                        <th class="col-unit">Unit</th>
+                        <th class="col-range">Normal range</th>
+                        <th class="col-notes">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in group['items'] %}
+                    <tr>
+                        <td class="fw-semibold">
+                            <label for="r{{ item.id }}" class="mb-0">{{ item.test.name }}</label>
+                        </td>
+                        <td>
+                            <div class="result-cell">
+                                <input type="text" id="r{{ item.id }}" class="form-control result-input"
+                                       name="result_value_{{ item.id }}" value="{{ item.result_value or '' }}"
+                                       data-range="{{ item.test.reference_range or '' }}" maxlength="100">
+                                <span class="result-flag"></span>
+                            </div>
+                        </td>
+                        <td class="text-muted">{{ item.test.unit or '' }}</td>
+                        <td class="text-muted">{{ item.test.reference_range or '' }}</td>
+                        <td>
+                            <input type="text" class="form-control form-control-sm notes-input"
+                                   name="result_notes_{{ item.id }}" value="{{ item.result_notes or '' }}"
+                                   placeholder="Optional">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+
+        <div class="results-actions">
+            {% if completed %}
+            <a href="/reports/{{ order.id }}" class="btn btn-light">Cancel</a>
+            <button type="submit" class="btn btn-success btn-lg px-4" data-final-action>
+                <i class="fas fa-save me-2"></i>Save changes
+            </button>
+            {% else %}
+            <button type="submit" class="btn btn-outline-primary">
+                <i class="fas fa-save me-1"></i>Save and finish later
+            </button>
+            <button type="submit" class="btn btn-success btn-lg px-4" formaction="/orders/{{ order.id }}/complete"
+                    data-final-action data-complete-action>
+                <i class="fas fa-check-circle me-2"></i>Complete &amp; create report
+            </button>
+            {% endif %}
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>initResultsForm(document.getElementById('resultsForm'));</script>
+{% endblock %}

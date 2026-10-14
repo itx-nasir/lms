@@ -1,192 +1,94 @@
 {% extends "base.html" %}
 
-{% block title %}Patients - Lab Management System{% endblock %}
+{% block title %}Patients{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1><i class="fas fa-users me-2"></i>Patients</h1>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPatientModal">
-            <i class="fas fa-plus me-1"></i>Add Patient
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-users"></i>Patients</h1>
+        <p class="page-subtitle">{{ patients|length }} registered patient{{ 's' if patients|length != 1 }}</p>
+    </div>
+    <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#patientModal" data-mode="add">
+        <i class="fas fa-user-plus me-2"></i>Add Patient
+    </button>
+</div>
+
+<div class="card" data-list-filter>
+    <div class="card-header filter-bar">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="search" class="form-control" placeholder="Search by name or phone" data-filter-search autofocus>
+        </div>
+        <button type="button" class="btn btn-link text-decoration-none d-none" data-filter-clear>
+            <i class="fas fa-xmark me-1"></i>Clear
         </button>
     </div>
 
-    <!-- Search -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <form method="get" class="input-group">
-                <input type="text" class="form-control" name="search" placeholder="Search patients by name or phone..." value="{{ search }}">
-                <button class="btn btn-outline-secondary" type="submit">
-                    <i class="fas fa-search"></i>
-                </button>
-            </form>
-        </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr><th>Name</th><th>Age</th><th>Gender</th><th>Phone</th><th>Registered</th><th class="text-end"></th></tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                <tr data-row data-search="{{ (patient.name ~ ' ' ~ patient.phone ~ ' ' ~ patient.phone|replace('-', ''))|lower }}">
+                    <td class="fw-semibold">{{ patient.name }}</td>
+                    <td>{{ patient.age }}</td>
+                    <td>{{ patient.gender }}</td>
+                    <td>{{ patient.phone }}</td>
+                    <td class="text-muted">{{ patient.created_at.strftime('%d %b %Y') if patient.created_at else '' }}</td>
+                    <td class="text-end text-nowrap">
+                        <a href="/orders/new?patient_id={{ patient.id }}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus me-1"></i>New order
+                        </a>
+                        <button type="button" class="btn btn-sm btn-light" title="Edit"
+                                data-bs-toggle="modal" data-bs-target="#patientModal" data-mode="edit"
+                                data-id="{{ patient.id }}" data-name="{{ patient.name }}" data-age="{{ patient.age }}"
+                                data-gender="{{ patient.gender }}" data-phone="{{ patient.phone }}">
+                            <i class="fas fa-pen"></i>
+                        </button>
+                        <form method="post" action="/patients/{{ patient.id }}/delete" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-light text-danger" title="Delete"
+                                    data-confirm="Delete patient {{ patient.name }}?">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
-    <!-- Patients Table -->
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-primary">
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Age</th>
-                            <th>Gender</th>
-                            <th>Phone</th>
-                            <th>Created</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for patient in patients %}
-                        <tr>
-                            <td>{{ patient.id }}</td>
-                            <td>{{ patient.name }}</td>
-                            <td>{{ patient.age }}</td>
-                            <td>
-                                <span class="badge {% if patient.gender == 'Male' %}bg-primary{% else %}bg-danger{% endif %}">
-                                    {{ patient.gender }}
-                                </span>
-                            </td>
-                            <td>{{ patient.phone }}</td>
-                            <td>{{ patient.created_at.strftime('%Y-%m-%d') }}</td>
-                            <td>
-                                <button type="button" class="btn btn-sm btn-outline-primary edit-patient-btn"
-                                        data-id="{{ patient.id }}" data-name="{{ patient.name|e }}"
-                                        data-age="{{ patient.age }}" data-gender="{{ patient.gender }}"
-                                        data-phone="{{ patient.phone }}">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <form method="post" action="/patients/{{ patient.id }}/delete" class="d-inline">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                            onclick="return confirm('Are you sure you want to delete this patient?')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="7" class="text-center text-muted py-4">
-                                No patients found
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    {% if not patients %}
+    <div class="empty-state">
+        <i class="fas fa-users"></i>
+        <div class="empty-title">No patients yet</div>
+        <div class="empty-text">Click "Add Patient" to register the first one.</div>
+    </div>
+    {% endif %}
+    <div class="empty-state d-none" data-filter-empty>
+        <i class="fas fa-filter"></i>
+        <div class="empty-title">No patients match your search</div>
     </div>
 </div>
 
-<!-- Add Patient Modal -->
-<div class="modal fade" id="addPatientModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" action="/patients">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="fas fa-user-plus me-2"></i>Add New Patient
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="age" class="form-label">Age</label>
-                            <input type="number" class="form-control" id="age" name="age" min="1" max="150" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="gender" class="form-label">Gender</label>
-                            <select class="form-select" id="gender" name="gender" required>
-                                <option value="">Select Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="phone" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="03XX-XXXXXXX" pattern="[0-9]{4}-[0-9]{7}" required>
-                        <div class="form-text">Format: 03XX-XXXXXXX (e.g., 0300-1234567)</div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i>Save Patient
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+{% include "_patient_modal.html" %}
+{% endblock %}
 
-<!-- Edit Patient Modal (shared, populated via JS) -->
-<div class="modal fade" id="editPatientModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" id="editPatientForm">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="fas fa-user-edit me-2"></i>Edit Patient
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="editName" name="name" required>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Age</label>
-                            <input type="number" class="form-control" id="editAge" name="age" min="1" max="150" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Gender</label>
-                            <select class="form-select" id="editGender" name="gender" required>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="editPhone" name="phone" placeholder="03XX-XXXXXXX" pattern="[0-9]{4}-[0-9]{7}" required>
-                        <div class="form-text">Format: 03XX-XXXXXXX (e.g., 0300-1234567)</div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i>Save Changes
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
+{% block scripts %}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const editModal = new bootstrap.Modal(document.getElementById('editPatientModal'));
-    document.querySelectorAll('.edit-patient-btn').forEach(btn => {
-        btn.addEventListener('click', function () {
-            document.getElementById('editPatientForm').action = `/patients/${this.dataset.id}/edit`;
-            document.getElementById('editName').value = this.dataset.name;
-            document.getElementById('editAge').value = this.dataset.age;
-            document.getElementById('editGender').value = this.dataset.gender;
-            document.getElementById('editPhone').value = this.dataset.phone;
-            editModal.show();
-        });
+document.getElementById('patientModal').addEventListener('show.bs.modal', function (e) {
+    var d = e.relatedTarget.dataset, edit = d.mode === 'edit', form = this.querySelector('form');
+    form.setAttribute('action', edit ? '/patients/' + d.id + '/edit' : '/patients');
+    this.querySelector('.modal-title span').textContent = edit ? 'Edit Patient' : 'Add New Patient';
+    this.querySelector('[data-save-label]').textContent = edit ? 'Save Changes' : 'Save Patient';
+    ['name', 'age', 'gender', 'phone'].forEach(function (field) {
+        form.querySelector('[name="' + field + '"]').value = edit ? d[field] : '';
     });
+});
+document.getElementById('patientModal').addEventListener('shown.bs.modal', function () {
+    this.querySelector('[name="name"]').focus();
 });
 </script>
 {% endblock %}
