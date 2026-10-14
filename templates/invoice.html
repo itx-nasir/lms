@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% from "_macros.html" import lab_header %}
+
+{% block title %}Invoice INV-{{ order.id }} · {{ order.patient.name }}{% endblock %}
+
+{% block content %}
+<div class="doc-toolbar no-print">
+    <a href="/orders/{{ order.id }}" class="back-link"><i class="fas fa-arrow-left me-1"></i>Back to order</a>
+    <div class="d-flex gap-2 flex-wrap">
+        <button type="button" onclick="window.print()" class="btn btn-primary">
+            <i class="fas fa-print me-1"></i>Print
+        </button>
+        <button type="button" class="btn btn-outline-primary"
+                data-pdf-target="invoiceContent" data-pdf-name="Invoice INV-{{ order.id }} {{ order.patient.name }}">
+            <i class="fas fa-file-pdf me-1"></i>Download PDF
+        </button>
+    </div>
+</div>
+
+<div class="report-wrapper invoice" id="invoiceContent">
+    <div class="report-card">
+        {{ lab_header('INVOICE', 'INV-' ~ order.id) }}
+
+        <div class="patient-section">
+            <div class="section-title"><i class="fas fa-user-circle me-2"></i>Bill To</div>
+            <div class="patient-grid">
+                <div><span class="label">Patient Name</span><span class="value">{{ order.patient.name }}</span></div>
+                <div><span class="label">Age / Gender</span><span class="value">{{ order.patient.age }} yrs / {{ order.patient.gender }}</span></div>
+                <div><span class="label">Phone</span><span class="value">{{ order.patient.phone }}</span></div>
+                <div><span class="label">Order Date</span><span class="value">{{ order.ordered_at.strftime('%d %b %Y, %I:%M %p') }}</span></div>
+                <div><span class="label">Referred By</span><span class="value">{{ order.referred_by or 'N/A' }}</span></div>
+                <div><span class="label">Invoice #</span><span class="value">INV-{{ order.id }}</span></div>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <div class="section-title"><i class="fas fa-list-check me-2"></i>Items</div>
+            <table class="table results-table">
+                <thead>
+                    <tr><th style="width:10%">#</th><th>Description</th><th style="width:25%" class="text-end">Amount (PKR)</th></tr>
+                </thead>
+                <tbody>
+                    {% set ns = namespace(row=0) %}
+                    {% for po in order.panel_orders %}
+                    {% set ns.row = ns.row + 1 %}
+                    <tr>
+                        <td>{{ ns.row }}</td>
+                        <td><strong>{{ po.panel.name }}</strong><span class="text-muted small d-block">{{ po.items|length }} tests included</span></td>
+                        <td class="text-end fw-semibold">{{ po.price|money }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% for item in order.items if not item.panel_order_id %}
+                    {% set ns.row = ns.row + 1 %}
+                    <tr>
+                        <td>{{ ns.row }}</td>
+                        <td><strong>{{ item.test.name }}</strong></td>
+                        <td class="text-end fw-semibold">{{ item.unit_price|money }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="invoice-total-row">
+                        <td colspan="2" class="text-end"><strong>Total Amount</strong></td>
+                        <td class="text-end"><strong class="invoice-total">PKR {{ order.total_amount|money }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="report-footer">
+            <p class="mb-1">Thank you for choosing Khalid Medical Laboratory.</p>
+            <div class="footer-divider"></div>
+            <p class="generated">Printed on <span class="print-timestamp"></span></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block vendor_scripts %}
+<script src="/static/vendor/js/jspdf.umd.min.js"></script>
+<script src="/static/vendor/js/html2canvas.min.js"></script>
+{% endblock %}

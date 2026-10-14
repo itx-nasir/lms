@@ -1,0 +1,27 @@
+{% macro status_badge(status) -%}
+{% if status == 'pending' -%}
+<span class="status-badge status-pending"><i class="fas fa-hourglass-half"></i>Waiting for results</span>
+{%- else -%}
+<span class="status-badge status-completed"><i class="fas fa-check"></i>Report ready</span>
+{%- endif %}
+{%- endmacro %}
+
+{% macro lab_header(badge, doc_id) %}
+<div class="report-header">
+    <div class="row align-items-center g-2">
+        <div class="col-3 col-md-2 text-center">
+            <img src="/static/images/lab_logo.png" alt="Khalid Medical Laboratory" class="report-logo">
+        </div>
+        <div class="col-6 col-md-8 text-center">
+            <div class="header-badge">{{ badge }}</div>
+            <h1 class="hospital-name">KHALID MEDICAL LABORATORY</h1>
+            <p class="hospital-name-urdu">خالد میڈیکل لیبارٹری</p>
+            <p class="hospital-address"><i class="fas fa-map-pin me-1"></i> Opposite Tehsil Headquarter Hospital, Banda Daud Shah, Karak</p>
+            <p class="hospital-phones"><i class="fas fa-phone me-1"></i> 0334-8686184 / 0315-9795902 / 0346-9044730 / 0315-9045966</p>
+        </div>
+        <div class="col-3 col-md-2 text-center">
+            <div class="report-id">{{ doc_id }}</div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
