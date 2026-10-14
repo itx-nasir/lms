@@ -43,7 +43,7 @@
         <div class="card-header results-header">
             <div>
                 <h2 class="card-title-sm"><i class="fas fa-flask text-primary me-2"></i>{{ 'Edit results' if completed else 'Enter results' }}</h2>
-                <div class="text-muted small"><kbd>Enter</kbd> moves to the next test · <kbd>Shift</kbd>+<kbd>Enter</kbd> goes back</div>
+                <div class="text-muted small d-none d-md-block"><kbd>Enter</kbd> moves to the next test · <kbd>Shift</kbd>+<kbd>Enter</kbd> goes back</div>
             </div>
             <div class="results-progress">
                 <span data-progress-text></span>
@@ -57,7 +57,7 @@
             <span class="badge rounded-pill text-bg-light border ms-2">{{ group['items']|length }}</span>
         </div>
         <div class="table-responsive">
-            <table class="table results-entry align-middle mb-0">
+            <table class="table results-entry align-middle mb-0 table-stack">
                 <thead>
                     <tr>
                         <th class="col-test">Test</th>
@@ -70,7 +70,7 @@
                 <tbody>
                     {% for item in group['items'] %}
                     <tr>
-                        <td class="fw-semibold">
+                        <td class="fw-semibold stack-title">
                             <label for="r{{ item.id }}" class="mb-0">{{ item.test.name }}</label>
                         </td>
                         <td>
@@ -81,9 +81,9 @@
                                 <span class="result-flag"></span>
                             </div>
                         </td>
-                        <td class="text-muted">{{ item.test.unit or '' }}</td>
-                        <td class="text-muted">{{ item.test.reference_range or '' }}</td>
-                        <td>
+                        <td class="text-muted" data-label="Unit">{{ item.test.unit or '' }}</td>
+                        <td class="text-muted" data-label="Normal range">{{ item.test.reference_range or '' }}</td>
+                        <td class="stack-field" data-label="Notes">
                             <input type="text" class="form-control form-control-sm notes-input"
                                    name="result_notes_{{ item.id }}" value="{{ item.result_notes or '' }}"
                                    placeholder="Optional">

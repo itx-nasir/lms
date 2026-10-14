@@ -25,19 +25,19 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0 table-stack">
             <thead>
                 <tr><th>Name</th><th>Age</th><th>Gender</th><th>Phone</th><th>Registered</th><th class="text-end"></th></tr>
             </thead>
             <tbody>
                 {% for patient in patients %}
                 <tr data-row data-search="{{ (patient.name ~ ' ' ~ patient.phone ~ ' ' ~ patient.phone|replace('-', ''))|lower }}">
-                    <td class="fw-semibold">{{ patient.name }}</td>
-                    <td>{{ patient.age }}</td>
-                    <td>{{ patient.gender }}</td>
-                    <td>{{ patient.phone }}</td>
-                    <td class="text-muted">{{ patient.created_at.strftime('%d %b %Y') if patient.created_at else '' }}</td>
-                    <td class="text-end text-nowrap">
+                    <td class="fw-semibold stack-title">{{ patient.name }}</td>
+                    <td data-label="Age">{{ patient.age }}</td>
+                    <td data-label="Gender">{{ patient.gender }}</td>
+                    <td data-label="Phone">{{ patient.phone }}</td>
+                    <td class="text-muted" data-label="Registered">{{ patient.created_at.strftime('%d %b %Y') if patient.created_at else '' }}</td>
+                    <td class="text-end text-nowrap stack-actions">
                         <a href="/orders/new?patient_id={{ patient.id }}" class="btn btn-sm btn-primary">
                             <i class="fas fa-plus me-1"></i>New order
                         </a>

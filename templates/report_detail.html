@@ -58,7 +58,7 @@
             {% for group in group_order_items(order) %}
             <div class="test-group">
                 <h5 class="group-name">{{ group.label }}</h5>
-                <table class="table results-table">
+                <table class="table results-table table-stack">
                     <thead>
                         <tr><th>Test</th><th>Result</th><th>Unit</th><th>Reference Range</th><th>Notes</th></tr>
                     </thead>
@@ -66,16 +66,18 @@
                         {% for item in group['items'] %}
                         {% set flag = result_flag(item.result_value, item.test.reference_range) %}
                         <tr>
-                            <td><strong>{{ item.test.name }}</strong></td>
-                            <td>
+                            <td class="stack-title"><strong>{{ item.test.name }}</strong></td>
+                            <td data-label="Result">
+                                <span>
                                 {% if item.result_value %}
                                 <span class="result-value {{ 'abnormal' if flag }}">{{ item.result_value }}</span>
                                 {% if flag %}<span class="report-flag">{{ flag }}</span>{% endif %}
                                 {% else %}<span class="text-muted">—</span>{% endif %}
+                                </span>
                             </td>
-                            <td>{{ item.test.unit or '—' }}</td>
-                            <td>{{ item.test.reference_range or '—' }}</td>
-                            <td>{{ item.result_notes or '—' }}</td>
+                            <td data-label="Unit">{{ item.test.unit or '—' }}</td>
+                            <td data-label="Reference Range">{{ item.test.reference_range or '—' }}</td>
+                            <td data-label="Notes" class="{{ 'stack-hide' if not item.result_notes }}">{{ item.result_notes or '—' }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

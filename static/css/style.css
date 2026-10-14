@@ -580,6 +580,88 @@ kbd { background: #eef1f6; color: var(--text); border: 1px solid #d5dcea; box-sh
     .patient-grid { grid-template-columns: 1fr 1fr; }
 }
 
+/* ── Phones ───────────────────────────────────────────────────────────────── */
+/* Scoped to screen so printing (A4 is narrower than 768px) keeps the desktop layout. */
+@media screen and (max-width: 767.98px) {
+    main.app-container { padding-top: 1rem !important; padding-bottom: 1.5rem !important; }
+
+    /* iOS Safari zooms into inputs with a font smaller than 16px */
+    .form-control, .form-select { font-size: 16px; }
+
+    .page-header { margin-bottom: 1rem; gap: .75rem; }
+    .page-title { font-size: 1.35rem; }
+    .page-subtitle { font-size: .9rem; }
+    .page-header > .btn, .page-header > .d-flex { width: 100%; }
+    .page-header > .d-flex > * { flex: 1 1 auto; }
+    .page-header > .d-flex > form > .btn { width: 100%; }
+
+    .stat-card { padding: .85rem; gap: .65rem; }
+    .stat-icon { width: 2.4rem; height: 2.4rem; font-size: 1rem; }
+    .stat-value { font-size: 1.4rem; }
+    .stat-label { font-size: .78rem; }
+
+    .filter-tabs { width: 100%; }
+    .filter-tabs .btn { flex: 1 1 0; font-size: .8rem; padding-left: .4rem; padding-right: .4rem; }
+    .filter-date { flex: 1 1 100%; width: 100%; }
+
+    .card-header { padding: .75rem 1rem; }
+    .results-progress { min-width: 0; width: 100%; text-align: left; }
+    .result-group-title { padding: .55rem 1rem; }
+    .results-actions { padding: .6rem .75rem; gap: .5rem; flex-wrap: nowrap; }
+    .results-actions > * { flex: 1 1 0; }
+    .results-actions .btn { font-size: .9rem; padding: .55rem .5rem; }
+
+    .info-strip { gap: .6rem 1.25rem; padding: .8rem 1rem; }
+
+    .doc-toolbar > .d-flex { width: 100%; }
+    .doc-toolbar .btn { flex: 1 1 calc(50% - .5rem); }
+    .doc-toolbar .btn.disabled { flex-basis: 100%; white-space: normal; }
+
+    .report-header { padding: .8rem .6rem; margin-bottom: 1rem; }
+    .report-header .col-3 { width: 18%; }
+    .report-header .col-6 { width: 64%; }
+    .report-logo { width: 44px; }
+    .hospital-name-urdu { font-size: .95rem; }
+    .hospital-address, .hospital-phones { font-size: .68rem; }
+    .header-badge { font-size: .6rem; letter-spacing: 1px; padding: .2rem .6rem; }
+    .report-id { font-size: .68rem; padding: .2rem .4rem; }
+    .patient-section { padding: .9rem 1rem; margin-bottom: 1.25rem; }
+    .patient-grid .value { font-size: .92rem; }
+
+    /* Tables marked .table-stack turn into one card per row; each cell shows
+       its column name from data-label. */
+    .table-stack thead { display: none; }
+    .table-stack, .table-stack tbody, .table-stack tr, .table-stack td { display: block; width: 100%; }
+    .table-stack tbody tr { padding: .75rem 1rem; border-bottom: 1px solid var(--border); }
+    .table-stack tbody tr:last-child { border-bottom: 0; }
+    .table.table-stack > :not(caption) > * > * { padding: .2rem 0; border: 0; box-shadow: none; }
+    .table-stack td:empty, .table-stack td.stack-hide { display: none; }
+    .table-stack td[data-label] { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; text-align: right; }
+    .table-stack td[data-label]::before {
+        content: attr(data-label);
+        flex-shrink: 0;
+        text-align: left;
+        color: var(--muted);
+        font-size: .72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+    .table-stack td.stack-title { font-size: 1rem; }
+    .table-stack td.stack-field { display: block; text-align: left; }
+    .table-stack td.stack-field::before { display: block; margin-bottom: .25rem; }
+    .table-stack td.stack-actions { display: flex; flex-wrap: wrap; gap: .4rem; padding-top: .6rem; text-align: left; }
+    .table-stack td.stack-actions > a:first-child { flex: 1 1 auto; }
+
+    .results-entry.table-stack tr.row-done td:first-child { box-shadow: none; }
+    .results-entry.table-stack tr.row-done { box-shadow: inset 3px 0 0 var(--success); }
+    .results-table.table-stack { border: 0; border-radius: 0; overflow: visible; }
+    .results-table.table-stack tbody tr { border: 1px solid #e3e9f2; border-radius: 10px; margin-bottom: .5rem; }
+    .results-table.table-stack > tbody tr:nth-child(even) td { background: transparent; }
+    .results-table.table-stack > tbody tr:nth-child(even) { background: #f8fbff; }
+    .results-table.table-stack .result-value { font-size: 1.05rem; }
+}
+
 /* ── Print ────────────────────────────────────────────────────────────────── */
 @media print {
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }

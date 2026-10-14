@@ -23,7 +23,7 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0 table-stack">
             <thead>
                 <tr><th>Report</th><th>Patient</th><th>Reported</th><th>Tests</th><th class="text-end"></th></tr>
             </thead>
@@ -33,17 +33,21 @@
                 <tr data-row class="clickable-row" onclick="location.href='/reports/{{ order.id }}'"
                     data-search="{{ ('rpt-' ~ order.id ~ ' ' ~ order.patient.name ~ ' ' ~ order.patient.phone)|lower }}"
                     data-date="{{ reported.strftime('%Y-%m-%d') }}">
-                    <td class="fw-semibold text-primary">RPT-{{ order.id }}</td>
-                    <td>
-                        <div class="fw-semibold">{{ order.patient.name }}</div>
-                        <small class="text-muted">{{ order.patient.age }} yrs · {{ order.patient.gender }} · {{ order.patient.phone }}</small>
+                    <td class="fw-semibold text-primary" data-label="Report">RPT-{{ order.id }}</td>
+                    <td data-label="Patient">
+                        <div>
+                            <div class="fw-semibold">{{ order.patient.name }}</div>
+                            <small class="text-muted">{{ order.patient.age }} yrs · {{ order.patient.gender }} · {{ order.patient.phone }}</small>
+                        </div>
                     </td>
-                    <td>
-                        <div>{{ reported.strftime('%d %b %Y') }}</div>
-                        <small class="text-muted">{{ reported.strftime('%I:%M %p') }}</small>
+                    <td data-label="Reported">
+                        <div>
+                            <div>{{ reported.strftime('%d %b %Y') }}</div>
+                            <small class="text-muted">{{ reported.strftime('%I:%M %p') }}</small>
+                        </div>
                     </td>
-                    <td><span class="badge rounded-pill text-bg-light border">{{ order.items|length }} tests</span></td>
-                    <td class="text-end text-nowrap" onclick="event.stopPropagation()">
+                    <td data-label="Tests"><span class="badge rounded-pill text-bg-light border">{{ order.items|length }} tests</span></td>
+                    <td class="text-end text-nowrap stack-actions" onclick="event.stopPropagation()">
                         <a href="/reports/{{ order.id }}" class="btn btn-sm btn-success"><i class="fas fa-eye me-1"></i>Open</a>
                         <a href="/orders/{{ order.id }}" class="btn btn-sm btn-light" title="Edit results"><i class="fas fa-pen-to-square"></i></a>
                     </td>

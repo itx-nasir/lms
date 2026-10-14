@@ -211,7 +211,8 @@ function downloadPDF(btn, elementId, fileName) {
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Preparing…';
     element.querySelectorAll('.print-timestamp').forEach(function (el) { el.textContent = formatNow(); });
 
-    html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false })
+    // Render at desktop width so a PDF made on a phone gets the same A4 layout.
+    html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false, windowWidth: 1200 })
         .then(function (canvas) {
             var pdf = new jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             var margin = 5;

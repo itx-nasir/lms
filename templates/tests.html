@@ -4,12 +4,12 @@
 
 {% macro test_row(test, panel_id='', searchable=False) %}
 <tr {% if searchable %}data-row data-search="{{ (test.name ~ ' ' ~ test.category.name)|lower }}"{% endif %}>
-    <td class="fw-semibold">{{ test.name }}</td>
-    {% if searchable %}<td><span class="badge rounded-pill text-bg-light border">{{ test.category.name }}</span></td>{% endif %}
-    <td class="text-muted">{{ test.unit or '—' }}</td>
-    <td class="text-muted">{{ test.reference_range or '—' }}</td>
-    <td>{{ test.price|money }}</td>
-    <td class="text-end text-nowrap">
+    <td class="fw-semibold stack-title">{{ test.name }}</td>
+    {% if searchable %}<td data-label="Category"><span class="badge rounded-pill text-bg-light border">{{ test.category.name }}</span></td>{% endif %}
+    <td class="text-muted" data-label="Unit">{{ test.unit or '—' }}</td>
+    <td class="text-muted" data-label="Normal range">{{ test.reference_range or '—' }}</td>
+    <td data-label="Price (PKR)">{{ test.price|money }}</td>
+    <td class="text-end text-nowrap stack-actions">
         <button type="button" class="btn btn-sm btn-light" title="Edit"
                 data-bs-toggle="modal" data-bs-target="#testModal" data-mode="edit"
                 data-id="{{ test.id }}" data-name="{{ test.name }}" data-price="{{ test.price }}"
@@ -80,7 +80,7 @@
                 </form>
             </summary>
             <div class="table-responsive">
-                <table class="table table-sm align-middle mb-0">
+                <table class="table table-sm align-middle mb-0 table-stack">
                     <thead><tr><th>Test</th><th>Unit</th><th>Normal range</th><th>Price (PKR)</th><th></th></tr></thead>
                     <tbody>
                         {% for test in panel.tests %}{{ test_row(test, panel.id) }}{% endfor %}
@@ -102,7 +102,7 @@
     <h2 class="section-hdr"><i class="fas fa-vial"></i>Single tests <span class="text-muted fw-normal">({{ standalone_tests|length }})</span></h2>
     <div class="card">
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
+            <table class="table table-hover align-middle mb-0 table-stack">
                 <thead><tr><th>Test</th><th>Category</th><th>Unit</th><th>Normal range</th><th>Price (PKR)</th><th></th></tr></thead>
                 <tbody>
                     {% for test in standalone_tests %}{{ test_row(test, searchable=True) }}{% endfor %}

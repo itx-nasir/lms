@@ -30,7 +30,7 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0 table-stack">
             <thead>
                 <tr>
                     <th>Order</th>
@@ -47,18 +47,22 @@
                     data-status="{{ order.status }}"
                     data-search="{{ ('ord-' ~ order.id ~ ' ' ~ order.patient.name ~ ' ' ~ order.patient.phone)|lower }}"
                     data-date="{{ order.ordered_at.strftime('%Y-%m-%d') }}">
-                    <td class="fw-semibold text-primary">ORD-{{ order.id }}</td>
-                    <td>
-                        <div class="fw-semibold">{{ order.patient.name }}</div>
-                        <small class="text-muted">{{ order.patient.age }} yrs · {{ order.patient.gender }} · {{ order.patient.phone }}</small>
+                    <td class="fw-semibold text-primary" data-label="Order">ORD-{{ order.id }}</td>
+                    <td data-label="Patient">
+                        <div>
+                            <div class="fw-semibold">{{ order.patient.name }}</div>
+                            <small class="text-muted">{{ order.patient.age }} yrs · {{ order.patient.gender }} · {{ order.patient.phone }}</small>
+                        </div>
                     </td>
-                    <td>
-                        <div>{{ order.ordered_at.strftime('%d %b %Y') }}</div>
-                        <small class="text-muted">{{ order.ordered_at.strftime('%I:%M %p') }}</small>
+                    <td data-label="Date">
+                        <div>
+                            <div>{{ order.ordered_at.strftime('%d %b %Y') }}</div>
+                            <small class="text-muted">{{ order.ordered_at.strftime('%I:%M %p') }}</small>
+                        </div>
                     </td>
-                    <td class="fw-semibold">PKR {{ order.total_amount|money }}</td>
-                    <td>{{ status_badge(order.status) }}</td>
-                    <td class="text-end text-nowrap" onclick="event.stopPropagation()">
+                    <td class="fw-semibold" data-label="Amount">PKR {{ order.total_amount|money }}</td>
+                    <td data-label="Status">{{ status_badge(order.status) }}</td>
+                    <td class="text-end text-nowrap stack-actions" onclick="event.stopPropagation()">
                         {% if order.status == 'pending' %}
                         <a href="/orders/{{ order.id }}" class="btn btn-sm btn-primary">
                             <i class="fas fa-pen-to-square me-1"></i>Enter results
